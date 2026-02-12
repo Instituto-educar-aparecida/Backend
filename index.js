@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 const PORT = 5173;
 
-// Configuração de Integração (Sua área!)
+
 app.use(cors({
   origin: 'http://localhost:5174', // Libera o Frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE']
