@@ -19,6 +19,8 @@
   "homepage": "https://github.com/Instituto-educar-aparecida/Backend#readme",
   "devDependencies": {
     "vite": "^5.0.0",
+    "express": "latest",
+    "cors": "latest",
     "tailwindcss": "latest",
     "autoprefixer": "latest",
     "postcss": "latest"
