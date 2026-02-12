@@ -1,0 +1,27 @@
+{
+  "name": "Backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --host"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Instituto-educar-aparecida/Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Instituto-educar-aparecida/Backend/issues"
+  },
+  "homepage": "https://github.com/Instituto-educar-aparecida/Backend#readme",
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "tailwindcss": "latest",
+    "autoprefixer": "latest",
+    "postcss": "latest"
+  }
+}
+
