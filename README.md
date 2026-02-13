@@ -2,7 +2,7 @@
 
 Bem-vindo ao ecossistema de desenvolvimento do **Instituto Educar**. Este projeto utiliza **Docker** para garantir que todos os 10 desenvolvedores e a gestão trabalhem em um ambiente idêntico.
 
-## 🛠️ Pré-requisitos
+##  🛠️ Pré-requisitos
 Você precisa apenas do **Docker** instalado:
 - [Instalar Docker](https://docs.docker.com)
 
