@@ -24,3 +24,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BACKEND] Servidor rodando na porta ${PORT}`);
 });
 
+// Teste de fluxo
