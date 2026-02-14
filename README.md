@@ -17,3 +17,4 @@ Você precisa apenas do **Docker** instalado:
 
 ## 🗄️ Banco de Dados (Apenas no Backend)
 O PostgreSQL já sobe automaticamente. As credenciais de acesso estão no arquivo `.env`.
+
