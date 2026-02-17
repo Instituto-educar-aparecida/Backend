@@ -1,6 +1,7 @@
 {
   "name": "Backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,10 +18,12 @@
     "url": "https://github.com/Instituto-educar-aparecida/Backend/issues"
   },
   "homepage": "https://github.com/Instituto-educar-aparecida/Backend#readme",
+  "dependencies": {
+     "express": "latest",
+     "cors": "latest"
+  },
   "devDependencies": {
     "vite": "^5.0.0",
-    "express": "latest",
-    "cors": "latest",
     "tailwindcss": "latest",
     "autoprefixer": "latest",
     "postcss": "latest"
