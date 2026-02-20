@@ -4,6 +4,7 @@
   "type": "module",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node index.js"
   },
@@ -23,10 +24,20 @@
      "cors": "latest"
   },
   "devDependencies": {
+<<<<<<< Updated upstream
     "vite": "^5.0.0",
     "tailwindcss": "latest",
+=======
+>>>>>>> Stashed changes
     "autoprefixer": "latest",
-    "postcss": "latest"
+    "cors": "latest",
+    "express": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3"
   }
 }
-

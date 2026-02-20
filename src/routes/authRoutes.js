@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { login, register, getUsers } from './Controllers/authControllers.js';
 const router = Router();
 
+<<<<<<< Updated upstream
 const USUARIOS_MOCK = [
     { email: "admin@educar.com", senha: "123", cargo: "admin" },
     { email: "aluno@educar.com", senha: "123", cargo: "estudante" },
@@ -29,6 +31,13 @@ router.post('/login', (req, res) => {
         return res.status(401).json({ message: "E-mail ou senha incorretos!" });
     }
 });
+=======
+router.post("/login", login);
+
+router.post("/register", register);
+
+router.get("/getUsers", getUsers)
+>>>>>>> Stashed changes
 
 export default router;
     
