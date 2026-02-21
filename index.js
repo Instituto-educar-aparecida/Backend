@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRoutes from './src/routes/authRoutes.js';
 import studentRoutes from './src/routes/studentRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
+import videoRoutes from './src/routes/videoRoutes.js';
 
 
 
@@ -11,8 +12,9 @@ const PORT = 5173;
 
 
 app.use(cors({
-  origin: 'http://localhost:5174', // Libera o Frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  origin: '*', // Libera o Frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/aluno', studentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/video', videoRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BACKEND] Servidor rodando na porta ${PORT}`);
