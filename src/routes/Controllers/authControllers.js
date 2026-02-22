@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt'
-import { User } from '../dataUsers/Users.js';
+import jwt from 'jsonwebtoken'
+const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
-const users = [];
+
+//Criar enum para roles
+export const users = [
+    { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
+    { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
+];
 
 async function register (req, res){
     const {nome, email, senha, role} = req.body;
@@ -17,21 +23,42 @@ async function register (req, res){
     }
     const hashPassword = await bcrypt.hash(senha, 8)
 
-    const newuser= new User(nome, email, hashPassword, role)
+    const newuser= new users (nome, email, hashPassword, role)
     users.push(newuser)
     return res.status(201).json({message:"Registrado com sucesso."})
 }
 
 function login(req, res){
     const {email, senha} = req.body
-    if(!email || !senha){
-        return res.status(400).json({message:'Campos obrgatórios em branco.'})
+    const usuario = users.find(u => u.email === email && u.senha === senha);
+    
+    if(usuario){
+        const token = jwt.sign({email: usuario.email, senha: usuario.senha, role: usuario.role}, SecretKey, {expiresIn: '2h'})
+        return res.status(201).json({msg: token})
+    }else{
+        res.status(400).json({msg:'Usuario ou senha invalido. Tente novamente.'})
     }
-    return res.status(200).json({message:'Login bem sucedido.'})
+    
+    
 }
 
 function getUsers(req, res){
+    
     res.send(users)
 }
 
-export {register, login, getUsers};
+function authenticateToken (req, res, next){
+    const token = req.headers['authorization'];
+
+    if(!token) return res.status(403).json({msg: 'Token não encontrado'});
+
+    jwt.verify(token, SecretKey,(err, user)=>{
+        if(err){
+            return res.status(403).json({msg:'Token invalido.'})
+            req.users = users;
+            next();
+        }
+    })
+}
+
+export {register, login, getUsers, authenticateToken};

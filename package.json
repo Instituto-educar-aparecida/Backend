@@ -24,11 +24,8 @@
      "cors": "latest"
   },
   "devDependencies": {
-<<<<<<< Updated upstream
     "vite": "^5.0.0",
     "tailwindcss": "latest",
-=======
->>>>>>> Stashed changes
     "autoprefixer": "latest",
     "cors": "latest",
     "express": "latest",
