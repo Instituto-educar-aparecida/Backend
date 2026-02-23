@@ -10,7 +10,7 @@ router.get("/getUsers", getUsers);
 
 //Resolver bug no middlewere de autenticação do token para autorização
 router.get('/painel', authenticateToken, (req, res) => {
-    if(req.users.role !== 'admin') {
+    if(req.user.role !== "admin") {
         return res.status(403).json({msg: 'Acesso negado!'})
     }
     console.log("Acesso ao painel adm");
