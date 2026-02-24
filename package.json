@@ -4,7 +4,6 @@
   "type": "module",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "node index.js"
   },
@@ -20,21 +19,18 @@
   },
   "homepage": "https://github.com/Instituto-educar-aparecida/Backend#readme",
   "dependencies": {
-     "express": "latest",
-     "cors": "latest"
+    "bcrypt": "^6.0.0",
+    "cors": "latest",
+    "express": "latest",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.18.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0",
-    "tailwindcss": "latest",
     "autoprefixer": "latest",
     "cors": "latest",
     "express": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
     "vite": "^5.0.0"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "jsonwebtoken": "^9.0.3"
   }
 }

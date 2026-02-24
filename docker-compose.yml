@@ -7,4 +7,52 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - WATCHPACK_POLLING=true
+      DB_HOST: db 
+      DB_USER: EducarDev
+      DB_PASSWORD: 271627
+      DB_NAME: EducarDev
+      DB_PORT: 5432
+    networks:
+      - pg-network
+    depends_on:
+      - db
+  
+  # configuração do container do postgres 
+  db:
+    image: postgres:16
+    command: postgres -c shared_buffers=256MB -c max_connections=200 -c listen_addresses='*'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 271627
+      POSTGRES_USER: EducarDev 
+      POSTGRES_DB: EducarDev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pg-network
+
+
+  # configuração do container do pgadmin 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: Educar@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: ProjetoEducar
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - pg-network
+    depends_on:
+      - db
+
+networks:
+  pg-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  pgadmin-data:
