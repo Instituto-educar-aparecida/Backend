@@ -19,4 +19,4 @@ function usuariosAdm(req, res){
     });
 }
 
-export {usuariosAdm, painelADM};
+export default {usuariosAdm, painelADM};

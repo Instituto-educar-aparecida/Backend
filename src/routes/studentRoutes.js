@@ -1,6 +1,10 @@
+import { Router } from 'express';
+const router = Router();
 
-
-function homeStudent(req, res){
-    res.json({msg: "Área do estudante funcionando."})
+export function homeStudent(req, res){
+    res.status(200).json({msg: "Área do estudante funcionando."})
 }
-export {homeStudent};
+
+router.get("/", homeStudent);
+
+export default router;
