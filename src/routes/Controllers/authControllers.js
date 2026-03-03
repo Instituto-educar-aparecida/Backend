@@ -1,18 +1,19 @@
 import bcrypt from 'bcrypt'
+import { addUser } from '../../database/config.js';
 import jwt from 'jsonwebtoken'
 const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
 
 //Criar enum para roles
-export const users = [
-    { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
-    { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
-];
+// export const users = [
+//     { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
+//     { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
+// ];
 
 async function register (req, res){
-    const {nome, email, senha, role} = req.body;
+    const {name, email, senha, role} = req.body;
     
-    if(!nome || !email || !senha || !role){
+    if(!name || !email || !senha || !role){
        return res.status(400).json({message:"Campo obrigatório faltando."}); 
     }
     if (role === "admin") {
@@ -21,10 +22,9 @@ async function register (req, res){
     if(role !== "aluno" && role !== "professor"){
         return res.status(400).json({message:"Valor incorreto. Tente novamente!"})
     }
-    const hashPassword = await bcrypt.hash(senha, 8)
+    const hash = await bcrypt.hash(senha, 8)
 
-    const newuser= new users (nome, email, hashPassword, role)
-    users.push(newuser)
+    await addUser(name, email, hash, role)
     return res.status(201).json({message:"Registrado com sucesso."})
 }
 

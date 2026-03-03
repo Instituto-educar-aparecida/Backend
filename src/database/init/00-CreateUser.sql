@@ -1,12 +1,13 @@
-
 CREATE TABLE IF NOT EXISTS public."user"
 (
-    id bigint NOT NULL,
-    hash "char"[],
-    role bigint,
-    email "char"[],
-    name character varying(45)[] COLLATE pg_catalog."default",
-    CONSTRAINT "User_pkey" PRIMARY KEY (id)
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(45) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hash TEXT NOT NULL,
+    role VARCHAR(20) NOT NULL
 )
 
 TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."user"
+    OWNER to "EducarDev";

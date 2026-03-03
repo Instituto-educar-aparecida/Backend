@@ -30,22 +30,22 @@ export const getUsersDb = async () => {
  * @param userId - id do usuário
  * retorna
 */
-export const addUser = async (userId) => {
+export const addUser = async (name, email, hash, role) => {
     console.log('addUser');
   try {
-    const query  = 'INSERT INTO "user" (id) VALUES ($1)';
-    const values = [userId]; 
+    const query  = 'INSERT INTO "user" (name, email, hash, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role;';
+    const values = [name, email, hash, role]; 
     const res = await pool.query(query,values);
-  
+    return res.rows[0];
   } catch (err) {
-      throw Error("Add user: Argumento inválido:"+err,{cause: err});
+      throw Error("Add user: erro ao tentar inserir usuario");
   } finally {
   }
 };
 
 export async function dbTeste(){
   await setTimeout(10000);
-    addUser(4);
+    //addUser(4);
      await setTimeout(10000);
     getUsersDb();
 }

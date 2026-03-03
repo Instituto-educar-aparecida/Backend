@@ -9,7 +9,7 @@ services:
     environment:
       DB_HOST: db 
       DB_USER: EducarDev
-      DB_PASSWORD: 271627
+      DB_PASSWORD: "271627"
       DB_NAME: EducarDev
       DB_PORT: 5432
     networks:
@@ -24,7 +24,7 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: 271627
+      POSTGRES_PASSWORD: "271627"
       POSTGRES_USER: EducarDev 
       POSTGRES_DB: EducarDev
     volumes:
