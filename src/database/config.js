@@ -43,11 +43,11 @@ export const addUser = async (name, email, hash, role) => {
   }
 };
 
-export async function dbTeste(){
-  await setTimeout(10000);
-    //addUser(4);
-     await setTimeout(10000);
-    getUsersDb();
-}
+// export async function dbTeste(){
+//   await setTimeout(10000);
+//     //addUser(4);
+//      await setTimeout(10000);
+//     getUsersDb();
+// }
 
-export default dbTeste;
+export default {addUser, getUsersDb};

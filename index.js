@@ -33,7 +33,7 @@ app.use('/api/video', videoRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BACKEND] Servidor rodando na porta ${PORT}`);
-  dbTeste();
+  //dbTeste();
 });
 
 // Teste de fluxo
