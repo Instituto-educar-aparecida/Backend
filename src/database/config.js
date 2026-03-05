@@ -14,9 +14,8 @@ const pool = new Pool({
 export const getUsersDb = async () => {
     console.log('getUsersDb');
   try {
-    const res = await pool.query('SELECT * FROM "user" ');
-    res.fields.re
-    console.log(res.rows);
+    const res = await pool.query('SELECT name, email, role FROM "user" ');
+    return res.rows;
   } catch (err) {
     console.error(err);
   } finally {

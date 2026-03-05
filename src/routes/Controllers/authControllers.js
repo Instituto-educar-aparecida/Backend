@@ -42,9 +42,9 @@ function login(req, res){
     
 }
 
-function getUsers(req, res){
-    
-    res.send(getUsersDb)
+async function getUsers(req, res){
+    const users = await getUsersDb();
+    return res.status(200).json(users);
 }
 
 const authenticateToken = (req, res, next)=>{
