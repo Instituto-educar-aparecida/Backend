@@ -5,11 +5,19 @@ const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
 
 //Criar enum para roles
-// export const users = [
-//     { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
-//     { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
-// ];
 
+export const users = [
+    { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
+    { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
+    { nome:"Zezin", email: "professor@educar.com", senha: "123", role: "professor", materia: "matematica"},
+];    
+
+    
+
+async function register (req, res){
+    const {nome, email, senha, role} = req.body;
+
+    
 async function register (req, res){
     const {name, email, senha, role} = req.body;
     
@@ -33,7 +41,7 @@ function login(req, res){
     const usuario = users.find(u => u.email === email && u.senha === senha);
     
     if(usuario){
-        const token = jwt.sign({email: usuario.email, senha: usuario.senha, role: usuario.role}, SecretKey, {expiresIn: '2h'})
+        const token = jwt.sign({email: usuario.email, senha: usuario.senha, role: usuario.role, materia: usuario.materia || null}, SecretKey, {expiresIn: '2h'})
         return res.status(201).json({msg: token})
     }else{
         res.status(400).json({msg:'Usuario ou senha invalido. Tente novamente.'})

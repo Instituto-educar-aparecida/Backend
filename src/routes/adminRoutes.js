@@ -1,4 +1,10 @@
+import { Router } from 'express';
+import {authenticateToken} from './Controllers/authControllers.js';
 
+const router = Router();
+
+router.get('/painel', authenticateToken, painelADM);
+router.post('/usuarios', usuariosAdm);
 
 function painelADM(req, res){
     if(req.user.role !== "admin") {
@@ -19,4 +25,4 @@ function usuariosAdm(req, res){
     });
 }
 
-export default {usuariosAdm, painelADM};
+export default router;

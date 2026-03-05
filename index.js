@@ -5,6 +5,7 @@ import studentRoutes from './src/routes/studentRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import videoRoutes from './src/routes/videoRoutes.js';
 import dbTeste  from './src/database/config.js';
+import professorRoutes from './src/routes/professorRoutes.js';
 //271627 5435
 
 
@@ -27,9 +28,10 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-//app.use('/api/aluno', studentRoutes);
-//app.use('/api/admin', adminRoutes);
+app.use('/api/aluno', studentRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/video', videoRoutes);
+app.use('/api/professor', professorRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BACKEND] Servidor rodando na porta ${PORT}`);
