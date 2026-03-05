@@ -13,10 +13,6 @@ export const users = [
 ];    
 
     
-
-async function register (req, res){
-    const {nome, email, senha, role} = req.body;
-
     
 async function register (req, res){
     const {name, email, senha, role} = req.body;
