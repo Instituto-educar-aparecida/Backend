@@ -35,7 +35,7 @@ app.use('/api/professor', professorRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`[BACKEND] Servidor rodando na porta ${PORT}`);
-  //dbTeste();
+  dbTeste();
 });
 
 // Teste de fluxo
