@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { addUser, getUsersDb, } from '../../database/config.js';
+import { addUser, getUsersDb, } from '../../database/UserDataAcess.js';
 import jwt from 'jsonwebtoken'
 const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 

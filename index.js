@@ -4,7 +4,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import studentRoutes from './src/routes/studentRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import videoRoutes from './src/routes/videoRoutes.js';
-import {dbTeste}  from './src/database/config.js';
+import {dbTeste}  from './src/database/UserDataAcess.js';
 // import professorRoutes from './src/routes/professorRoutes.js';  //precisa ser criado
 
 
