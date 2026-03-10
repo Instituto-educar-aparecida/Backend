@@ -68,7 +68,7 @@ export const removeUser = async (id) => {
   }
 };
 
- export async function dbTeste() {
+ export const dbTeste = async()=> {
     const u = new user("callrlos","carlllos@gmail.com","st","adssfdadfhuha");
     await addUser(u);
     if(await removeUser(10))
