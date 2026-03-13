@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import {user,roles} from "../domain/User.js"
+import {User, roles} from "../domain/User.js"
 import { setTimeout } from 'timers/promises';
 
 const pool = new Pool({
@@ -25,22 +25,29 @@ export const getUsersDb = async () => {
   }
 };
 
+export const findUserByEmail = async (email) => {
+  const query = 'SELECT id, name, email, hash, role FROM "user" WHERE email = $1';
+  const values = [email];
+  const result = await pool.query(query, values);
+  return result.rows[0];
+};
+
 
 /** Adicionar um usuário 
  * Retorna: 
  *  - id se usuário adicionado com sucesso * 
  *  - {} do contrario
 */
-export const addUser = async (user) => {
-    console.log('addUser ${user}');
+export const addUser = async (User) => {
+    console.log("AddUser: ");
   try { 
     const query  = 'INSERT INTO "user" (name, email, hash, role) VALUES ($1, $2, $3, $4) RETURNING id;';
-    const values = [user.name, user.email, user.hash, user.role]; 
+    const values = [User.name, User.email, User.hash, User.role]; 
     const res = await pool.query(query,values);
-       console.log("Inserido: %O", res.rows[0].id);
+       console.log("Inserido: ", res.rows[0].id);
   } 
   catch (err) {
-      console.Log("Add user: erro ao tentar inserir usuario");
+      console.log("Add user: erro ao tentar inserir usuario");
   } 
   finally {
     return {}; //se chegou no finally retorna vazio
@@ -69,7 +76,7 @@ export const removeUser = async (id) => {
 };
 
  export const dbTeste = async()=> {
-    const u = new user("callrlos","carlllos@gmail.com","st","adssfdadfhuha");
+    const u = new User("callrlos","carlllos@gmail.com","st","adssfdadfhuha");
   
     await addUser(u);
     if(await removeUser(10))

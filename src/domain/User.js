@@ -1,11 +1,11 @@
 /** Lista de funções/tipos de acesso
 */
 export const roles = Object.freeze({
-  Adm: 'Adm', Student: 'Student', Teacher: 'Student'
+  Adm: 'Adm', Student: 'Student', Teacher: 'Teacher'
 });
 
 
-export class user{
+export class User{
     id;
     name;
     email;
@@ -29,4 +29,4 @@ export class user{
     }
 }
 
-export default {user,roles}
+export default {User,roles}

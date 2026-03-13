@@ -15,7 +15,7 @@ export class ProgressoCurso{
 
     /*
      * Argumentos: 
-     *  - titulo:string
+     *  
      *  - id do aluno:int
      *  - id do professor:int
      *  - status:aluno_status_em_curso
