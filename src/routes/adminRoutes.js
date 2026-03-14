@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import {authenticateToken} from './Controllers/authControllers.js';
-import { getUsersDb } from '../database/config.js';
-import { VincProf } from '../database/config.js';
+import {authenticateToken} from '../routes/MiddlewereRoutes.js'
 
 const router = Router();
 

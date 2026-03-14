@@ -1,10 +1,17 @@
 import bcrypt from 'bcrypt'
-import { addUser, getUsersDb } from '../../database/config.js';
+import { addUser, findUserByEmail, getUsersDb, } from '../../database/UserDataAcess.js';
 import jwt from 'jsonwebtoken'
 const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
 
+// export const users = [
+//     { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
+//     { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
+//     { nome:"Zezin", email: "professor@educar.com", senha: "123", role: "professor", materia: "matematica"},
+// ];    
 
+    
+    
 async function register (req, res){
     const {name, email, senha} = req.body;
     const role = 'aluno';
@@ -26,30 +33,24 @@ async function register (req, res){
 
 async function login(req, res){
     const {email, senha} = req.body
-    const usersDb = await getUsersDb();
-    const usuario = usersDb.find(u => u.email === email);
     
-    if(usuario){
-        const senhaValida = await bcrypt.compare(senha, usuario.senha);
-        if (senhaValida) {
-        
-           const token = jwt.sign(
-               {
-                 email: usuario.email, 
-                 role: usuario.role, 
-                 materia: usuario.materia || null
-               },
-               SecretKey, 
-               {expiresIn: '2h'}
-           );
-           return res.status(201).json({
-               auth: true,
-               token: token,
-               role: usuario.role
-           });   
-        }  
+    if(!email||!senha){
+        return res.status(400).json({msg: "Campos obrigatórios em branco."});
     }
-    return res.status(400).json({msg:'Usuario ou senha invalido. Tente novamente.'})
+
+    const user = await findUserByEmail(email);
+
+    const senhaHash = await bcrypt.compare(senha, user.hash);
+
+    if(!user || !senhaHash){
+        return res.status(401).json({msg: "Usuário ou senha invalidos. Tente novamente."})
+    }else{
+        const token = jwt.sign({id: user.id, nome: user.name, role: user.role}, SecretKey, {expiresIn: "2h"});
+        return res.status(200).json({token})
+    }
+    
+    
+    
 }
     
     
@@ -59,18 +60,6 @@ async function getUsers(req, res){
     return res.status(200).json(users);
 }
 
-const authenticateToken = (req, res, next)=>{
-    const authHeader = req.headers['authorization'];
-    
-    const token = authHeader && authHeader.split(' ')[1];
 
-    if(!token) return res.status(403).json({msg: 'Token não encontrado'});
 
-    jwt.verify(token, SecretKey,(err, user)=>{
-        if(err)return res.status(403).json({msg: 'Token inválido!'})
-        req.user = user;
-        next();
-    })
-}
-
-export {register, login, getUsers, authenticateToken};
+export {register, login, getUsers};
