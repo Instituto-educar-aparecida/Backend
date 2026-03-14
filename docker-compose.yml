@@ -15,7 +15,8 @@ services:
     networks:
       - pg-network
     depends_on:
-      - db
+        db:
+          condition: service_healthy 
   
   # configuração do container do postgres 
   db:
@@ -32,6 +33,11 @@ services:
       - ./src/database/init:/docker-entrypoint-initdb.d
     networks:
       - pg-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U EducarDev -d EducarDev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # configuração do container do pgadmin 
   pgadmin:

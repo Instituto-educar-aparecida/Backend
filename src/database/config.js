@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { setTimeout } from 'timers/promises';
+
 
 const pool = new Pool({
   host: process.env.DB_HOST, 
@@ -10,11 +10,22 @@ const pool = new Pool({
 });
 
   console.log('--> config db carregado');
-// Example query
+
 export const getUsersDb = async () => {
     console.log('getUsersDb');
   try {
-    const res = await pool.query('SELECT name, email, role FROM "user" ');
+    const query = `
+      SELECT
+        u.id,
+        u.name,
+        u.email,
+        u.role,
+        u.hash AS senha,
+        p.materia 
+      FROM "user" u
+      LEFT JOIN professores p on u.id = p.user_id;
+    `;
+    const res = await pool.query(query);
     return res.rows;
   } catch (err) {
     console.error(err);
@@ -25,10 +36,7 @@ export const getUsersDb = async () => {
 };
 
 
-/** Adicionar um usuário 
- * @param userId - id do usuário
- * retorna
-*/
+
 export const addUser = async (name, email, hash, role) => {
     console.log('addUser');
   try {
@@ -37,11 +45,29 @@ export const addUser = async (name, email, hash, role) => {
     const res = await pool.query(query,values);
     return res.rows[0];
   } catch (err) {
-      throw Error("Add user: erro ao tentar inserir usuario");
+      console.error("Add user: erro ao tentar inserir usuario", err.message);
+      throw err;
   } finally {
   }
 };
 
+export const VincProf = async (userId, materia) => {
+    console.log('vincularProfessor no Postgres para o ID:', userId);
+  try {
+    const query = `
+      INSERT INTO professores (user_id, materia)
+      VALUES ($1, $2)
+      ON CONFLICT (user_id) DO UPDATE SET materia = $2
+      RETURNING *;
+    `;
+    const values = [userId, materia];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  } catch (err) {
+      console.error("Erro ao vincular professor no banco:", err.message);
+      throw err;
+  }
+}
 // export async function dbTeste(){
 //   await setTimeout(10000);
 //     //addUser(4);
@@ -49,4 +75,4 @@ export const addUser = async (name, email, hash, role) => {
 //     getUsersDb();
 // }
 
-export default {addUser, getUsersDb};
+export default {addUser, getUsersDb, VincProf};

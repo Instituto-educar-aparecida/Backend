@@ -1,10 +1,15 @@
 import express from 'express';
+import {authenticateToken } from '../routes/Controllers/authControllers.js';
+
 const router = express.Router();
 
-console.log("--> Rota de vídeo carregada");
 
+
+router.use(authenticateToken);
 router.get('/data/:videoId', (req, res) => {
   const { videoId } = req.params;
+  
+  if(!videoId) return res.status(400).json({ msg: 'VideoId obrigatório'});
   
   res.json({
     videoId,

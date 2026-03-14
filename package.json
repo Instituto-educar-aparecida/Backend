@@ -23,7 +23,8 @@
     "cors": "latest",
     "express": "latest",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.18.0"
+    "pg": "^8.18.0",
+    "react-router-dom": "^7.13.1"
   },
   "devDependencies": {
     "autoprefixer": "latest",

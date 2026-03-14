@@ -4,20 +4,12 @@ import jwt from 'jsonwebtoken'
 const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
 
-//Criar enum para roles
 
-export const users = [
-    { nome:"Atena", email: "admin@educar.com", senha: "123", role: "admin" },
-    { nome:"Bartolomeu", email: "aluno@educar.com", senha: "123", role: "estudante" },
-    { nome:"Zezin", email: "professor@educar.com", senha: "123", role: "professor", materia: "matematica"},
-];    
-
-    
-    
 async function register (req, res){
-    const {name, email, senha, role} = req.body;
+    const {name, email, senha} = req.body;
+    const role = 'aluno';
     
-    if(!name || !email || !senha || !role){
+    if(!name || !email || !senha ){
        return res.status(400).json({message:"Campo obrigatório faltando."}); 
     }
     if (role === "admin") {
@@ -29,22 +21,38 @@ async function register (req, res){
     const hash = await bcrypt.hash(senha, 8)
 
     await addUser(name, email, hash, role)
-    return res.status(201).json({message:"Registrado com sucesso."})
+    return res.status(200).json({message:"Registrado com sucesso."})
 }
 
-function login(req, res){
+async function login(req, res){
     const {email, senha} = req.body
-    const usuario = users.find(u => u.email === email && u.senha === senha);
+    const usersDb = await getUsersDb();
+    const usuario = usersDb.find(u => u.email === email);
     
     if(usuario){
-        const token = jwt.sign({email: usuario.email, senha: usuario.senha, role: usuario.role, materia: usuario.materia || null}, SecretKey, {expiresIn: '2h'})
-        return res.status(201).json({msg: token})
-    }else{
-        res.status(400).json({msg:'Usuario ou senha invalido. Tente novamente.'})
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
+        if (senhaValida) {
+        
+           const token = jwt.sign(
+               {
+                 email: usuario.email, 
+                 role: usuario.role, 
+                 materia: usuario.materia || null
+               },
+               SecretKey, 
+               {expiresIn: '2h'}
+           );
+           return res.status(201).json({
+               auth: true,
+               token: token,
+               role: usuario.role
+           });   
+        }  
     }
-    
-    
+    return res.status(400).json({msg:'Usuario ou senha invalido. Tente novamente.'})
 }
+    
+    
 
 async function getUsers(req, res){
     const users = await getUsersDb();
@@ -52,7 +60,9 @@ async function getUsers(req, res){
 }
 
 const authenticateToken = (req, res, next)=>{
-    const token = req.headers['authorization'];
+    const authHeader = req.headers['authorization'];
+    
+    const token = authHeader && authHeader.split(' ')[1];
 
     if(!token) return res.status(403).json({msg: 'Token não encontrado'});
 
