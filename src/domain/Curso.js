@@ -1,35 +1,23 @@
-//deixei essas opções de status por enquanto, vamos refinar isso quando estiver mais adiantado
-/** Opções de status para o curso */
 export const curso_status = Object.freeze({
-  Programado:"Programado",
-  InscricoesAbertas:"Inscricoes Abertas",
-  AguardandoInicio:"Aguardando inicio",
-  EmAndamento:"Em andamento",
-  Cancelado:"Cancelado",
-  
+  Programado: "Programado",
+  InscricoesAbertas: "Inscricoes Abertas",
+  AguardandoInicio: "Aguardando inicio",
+  EmAndamento: "Em andamento",
+  Cancelado: "Cancelado",
 });
 
-export class Curso{
-    id;           
-    titulo;        
-    materia_id;     
-    professor_id;  
-    status;        
+export class Curso {
+    constructor(titulo, materia_id, professor_id, status = curso_status.Programado) {
+        if(!titulo) throw new Error("titulo é obrigatório");
+        if(!materia_id) throw new Error("materia_id é obrigatório");
+        if(!professor_id) throw new Error("professor_id é obrigatório");
+        if(!Object.values(curso_status).includes(status)) throw new Error("status inválido");
 
-    /** Cria uma matéria
-     * Argumentos: 
-     *  - titulo: string
-     *  - id da matéria: int
-     *  - id do professor: int
-     *  - id:int -> já possui valor padrão definido, bd é responsável por preencher o id de cada usuário
-    */
-    constructor(titulo_,materia_id_,professor_id_,status_,id_=-1){
-        this.id             = id_;           
-        this.titulo         = titulo_;          
-        this.materia_id     = materia_id_;     
-        this.professor_id   = professor_id_; 
-        this.status         = status_;       
+        this.titulo = titulo;
+        this.materia_id = materia_id;
+        this.professor_id = professor_id;
+        this.status = status;
     }
 }
 
-export default {Curso,curso_status}
+export default { Curso, curso_status };

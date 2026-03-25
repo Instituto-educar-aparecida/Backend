@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateToken } from '../routes/Controllers/authControllers.js';
+import { authenticateToken } from '../MiddlewereRoutes.js';
 import { dashboard, getMateria } from './Controllers/professorController.js';
 
 const router = Router();
@@ -14,7 +14,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/dashboard', dashboard);
-router.get('/:materia', getMateria);
+router.get('/materia/:materia', getMateria);
 
 export default router;
 

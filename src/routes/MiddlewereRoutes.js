@@ -1,5 +1,10 @@
-const authenticateToken = (req, res, next)=>{
-    const token = req.headers['authorization'];
+import jwt from 'jsonwebtoken';
+import { SecretKey } from './Controllers/authControllers.js';
+
+export const authenticateToken = (req, res, next)=>{
+    const authHeader = req.headers['authorization'];
+    
+    const token = authHeader && authHeader.split(' ')[1];    
 
     if(!token) return res.status(403).json({msg: 'Token não encontrado'});
 
@@ -8,6 +13,9 @@ const authenticateToken = (req, res, next)=>{
         req.user = user;
         next();
     })
-}
+};
 
-export default {authenticateToken}
+
+
+
+

@@ -1,32 +1,21 @@
-/** Lista de funções/tipos de acesso
-*/
 export const roles = Object.freeze({
-  Adm: 'Adm', Student: 'Student', Teacher: 'Teacher'
+  Admin: 'admin',
+  Aluno: 'aluno',
+  Professor: 'professor'
 });
 
+export class User {
+    constructor(name, email, role, hash) {
+        if(!name) throw new Error("name é obrigatório");
+        if(!email) throw new Error("email é obrigatório");
+        if(!hash) throw new Error("hash é obrigatório");
+        if(!Object.values(roles).includes(role)) throw new Error("role inválido");
 
-export class User{
-    id;
-    name;
-    email;
-    role;
-    hash;
-
-    /** Cria um usuário
-     * Argumentos: 
-     *  - nome
-     *  - email
-     *  - role
-     *  - hash
-     *  - id -> já possui valor padrão definido, bd é responsável por preencher o id de cada usuário
-    */
-    constructor(name_,email_,role_,hash_,id_=-1){
-        this.id=id_;
-        this.email=email_;
-        this.name =name_;
-        this.role=role_;
-        this.hash=hash_;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.hash = hash;
     }
 }
 
-export default {User,roles}
+export default { User, roles };

@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public."curso"
 (
-    id bigint NOT NULL PRIMARY KEY,
+    id BIGSERIAL  PRIMARY KEY,
     titulo varchar(45) NOT NULL,
     materia_id bigint,
     professor_id bigint,
@@ -13,5 +13,5 @@ CREATE TABLE IF NOT EXISTS public."curso"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.curso
+ALTER TABLE IF EXISTS public."curso"
     OWNER to "EducarDev";

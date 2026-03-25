@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS public."atividade"
 (
-    id bigint NOT NULL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     titulo character varying(45) COLLATE pg_catalog."default" NOT NULL,
     materia_id bigint,
     professor_id bigint,
@@ -15,5 +15,5 @@ CREATE TABLE IF NOT EXISTS public."atividade"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.curso
+ALTER TABLE IF EXISTS public."atividade"
     OWNER to "EducarDev";

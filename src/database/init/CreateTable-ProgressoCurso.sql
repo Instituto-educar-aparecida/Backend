@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public."ProgressoCurso"
 (
-    id bigint NOT NULL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     aluno_id bigint NOT NULL,
     curso_id bigint NOT NULL,
     status VARCHAR(20) COLLATE pg_catalog."default" NOT NULL,

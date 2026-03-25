@@ -52,7 +52,19 @@ async function login(req, res){
     
     
 }
-    
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers('authorization');
+    const token = authHeader && authHeader.split('')[1];
+
+    if(!token) return res.status(401).json({ message: "Token não fornecido"});
+
+    jwt.verify(token, SecretKey, (err, user) => {
+        if(err) return res.status(403).json({ message: "Token inválido ou expirado"});
+        req.user =user;
+        next();
+    })
+}
     
 
 async function getUsers(req, res){
@@ -62,4 +74,4 @@ async function getUsers(req, res){
 
 
 
-export {register, login, getUsers};
+export {register, login, getUsers, authenticateToken};

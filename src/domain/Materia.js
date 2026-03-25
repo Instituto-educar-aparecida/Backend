@@ -1,23 +1,12 @@
+export class Materia {
+    constructor(nome, descricao, professor_id = -1) {
+        if(!nome) throw new Error("nome é obrigatório");
+        if(!professor_id || professor_id === -1) throw new Error("professor_id é obrigatório");
 
-export class Materia{
-    id;
-    name;
-    descricao;
-    professor_id;
-
-    /** Cria uma matéria
-     * Argumentos: 
-     *  - nome : string
-     *  - descrição : string
-     *  - id do professor : int
-     *  - id -> já possui valor padrão definido, bd é responsável por preencher o id de cada usuário
-    */
-    constructor(name_,descricao_,professor_id_=-1){
-        this.id          = id_;
-        this.name        =name_        ;    
-        this.descricao   =descricao_   ;   
-        this.professor_id=professor_id_; 
+        this.nome = nome;
+        this.descricao = descricao;
+        this.professor_id = professor_id;
     }
 }
 
-export default {Materia}
+export default { Materia };

@@ -1,40 +1,31 @@
-import {Pool} from 'pg';
-import {Materia} from '../domain/Materia.js'
-
-const pool = new Pool({
-  host: process.env.DB_HOST, 
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-});
+import { pool } from './UserDataAcess.js';
 
 
-export const addMateria = async (Materia) => {
+
+export const addMateria = async (materia) => {
     try{
-        const query = 'INSERT INTO "materia" (nome, descricao, professor_id) VALUES ($1, $2)';
-        const values = [Materia.name, Materia.descriacao, Materia.professor_id];
+        const query = 'INSERT INTO "materia" (nome, descricao, professor_id) VALUES ($1, $2, $3) RETURNING *';
+        const values = [materia.nome, materia.descricao, materia.professor_id];
         const res = await pool.query(query, values);
+        return res.rows[0];
 
     }catch(err){
-        console.Log("Add Materia: erro ao tentar inserir materia.");
+        console.error("Add Materia: erro ao tentar inserir materia.", err.message);
+        throw err;
     }
 }
 
-export const removeUser = async (id) => {
+export const removeMateria = async (id) => {
   
   let res = false
   try { 
-    const query  = 'DELETE FROM "Materia" where id = $1';
-    const values = [id]; 
-    res = (await pool.query(query,values)).rowCount >0;
-    console.log("Inserido: %O", count);
+    const query  = 'DELETE FROM "materia" where id = $1';
+    const res = await pool.query(query, [id]); 
+    return res.rowCount > 0;
   } 
   catch (err) {
-      console.Log("Remove: erro ao tentar remover materia.");    
+      console.error("Remove: erro ao tentar remover materia.", err.message);  
+      throw err;
    
-  } 
-  finally{
-    return res;
-  }
+  };
 };
