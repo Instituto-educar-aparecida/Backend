@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { addUser, findUserByEmail, getUsersDb, } from '../../database/UserDataAcess.js';
 import jwt from 'jsonwebtoken'
+import {User} from '../../domain/User.js';
 const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 
 
@@ -15,7 +16,7 @@ const SecretKey = '9CF93E9BCE32CCD162D24EE671FFAB8FCCB8C5D6F2CCA74DC1E8953A'
 async function register (req, res){
     const {name, email, senha, role} = req.body;
     
-    if(!name || !email || !senha || !role){
+    if(!name || !email || !senha  || !role){
        return res.status(400).json({message:"Campo obrigatório faltando."}); 
     }
     if (role === "admin") {
@@ -26,30 +27,46 @@ async function register (req, res){
     }
     const hash = await bcrypt.hash(senha, 8)
 
-    await addUser(name, email, hash, role)
+    const user = new User (name, email, hash, role)
+    await addUser(user)
     return res.status(201).json({message:"Registrado com sucesso."})
 }
 
 async function login(req, res){
-    const {email, senha} = req.body
-    
-    if(!email||!senha){
-        return res.status(400).json({msg: "Campos obrigatórios em branco."});
+try {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({ msg: "Campos obrigatórios em branco." });
     }
 
     const user = await findUserByEmail(email);
 
-    const senhaHash = await bcrypt.compare(senha, user.hash);
-
-    if(!user || !senhaHash){
-        return res.status(401).json({msg: "Usuário ou senha invalidos. Tente novamente."})
-    }else{
-        const token = jwt.sign({id: user.id, nome: user.name, role: user.role}, SecretKey, {expiresIn: "2h"});
-        return res.status(200).json({token})
+    if (!user) {
+      return res.status(401).json({ msg: "Usuário ou senha inválido. Tente novamente." });
     }
-    
-    
-    
+
+    const senhaValida = await bcrypt.compare(senha, user.hash);
+
+    if (!senhaValida) {
+      return res.status(401).json({ msg: "Usuário ou senha inválido. Tente novamente." });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role
+      },
+      SecretKey,
+      { expiresIn: "2h" }
+    );
+
+    return res.status(200).json({ token });
+  } catch (err) {
+    console.error("Erro no login:", err);
+    return res.status(500).json({ msg: "Erro interno ao realizar login." });
+  }
 }
 
 async function getUsers(req, res){
