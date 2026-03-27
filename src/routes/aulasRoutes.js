@@ -1,6 +1,6 @@
 import { Router } from "express"; 
-import { authenticateToken } from "../MiddlewereRoutes.js";
-import { saveProgress, getProgress, getCompleted } from "../database/LessonProgressDataAcess.js"
+import { authenticateToken } from "./MiddlewereRoutes.js";
+import { saveProgress, getProgress, getCompleted } from "../database/LessonProgressDataAccess.js"
 
 
 const router = Router();

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateToken } from '../MiddlewereRoutes.js';
+import { authenticateToken } from './MiddlewereRoutes.js';
 import { dashboard, getMateria } from './Controllers/professorController.js';
 
 const router = Router();

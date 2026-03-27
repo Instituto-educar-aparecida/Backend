@@ -11,7 +11,7 @@ export const addCurso = async (curso) => {
         console.error("Add Curso: erro ao tentar inserir curso.", err.message);
         throw err;
     }       
-}
+};
 
 export const removeCurso = async (id) => {
   

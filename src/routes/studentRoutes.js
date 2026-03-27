@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {authenticateToken } from '../routes/Controllers/authControllers.js';
+import {authenticateToken } from './MiddlewereRoutes.js';
 
 
 
