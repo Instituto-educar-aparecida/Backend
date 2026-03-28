@@ -3,6 +3,7 @@ services:
     build: .
     ports:
       - "5173:5173"
+    restart: always  
     volumes:
       - .:/app
       - /app/node_modules
@@ -12,6 +13,7 @@ services:
       DB_PASSWORD: "271627"
       DB_NAME: EducarDev
       DB_PORT: 5432
+      JWT_SECRET: ${JWT_SECRET}
     networks:
       - pg-network
     depends_on:
