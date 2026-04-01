@@ -55,7 +55,7 @@ try {
     const token = jwt.sign(
       {
         id: user.id,
-        email: user.email,
+        email: user.name,
         role: user.role
       },
       SecretKey,
@@ -76,4 +76,4 @@ async function getUsers(req, res){
 
 
 
-export {register, login, getUsers};
+export {register, login, getUsers, SecretKey};

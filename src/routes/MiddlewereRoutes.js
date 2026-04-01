@@ -1,3 +1,5 @@
+import { SecretKey } from "./Controllers/authControllers";
+
 export const authenticateToken = (req, res, next)=>{
     const token = req.headers['authorization'];
 
