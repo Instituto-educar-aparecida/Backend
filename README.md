@@ -38,8 +38,8 @@ No ambiente de desenvolvimento as credenciais são:
 1. Tenha certeza de ter subido as imagens corretamente
 2. Com o db funcional digite no navegador http://localhost:8080 
 3. Deve abrir a página de login, caso não abra, aguarde um pouco. Utilize as seguintes credenciais:
-- Email: Educar@gmail.com
-- Senha: ProjetoEducar
+    - Email: Educar@gmail.com
+    - Senha: ProjetoEducar
 4. Click com o botão direito em **servers** e depois em conectar server
 5. Crie um nome qualquer para o servidor e vá para a próxima aba
 6. Em host você deve escrever **db** e preencher as credenciais confome descrito acima.
@@ -51,4 +51,7 @@ Os arquivos de inicialização do esquema são os que estão na pasta `\database
 1. Adicione o arquivo `.sql`na pasta `\database\init\` 
     *obs* você pode usar o pgAdmin para criar as tables e gerar o sql
 2. Limpe o volume do banco de dados: pode ser feito no Docker desktop ou utilizando o comando `docker compose down -v-`, que "baixa" os containers e remove todos os volumes.
+
+
+
 
