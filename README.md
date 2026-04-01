@@ -21,6 +21,9 @@ Você precisa apenas do **Docker** instalado:
 
     **Obs.:** Na primeira vez que executar os containers, o Postgres irá levar um tempo inicializando o schema, é possível que isso cause algum erro no App ou no PgAdmin. Nessa situação basta abrir Docker desktop e reinicializar os containers ou usar um `docker compose down` para "baixar" os containers e depois um `docker compose up`  para subi-los  novamente.
 
+## Documentação
+1. Esquema do banco de dados - db_schema.md
+2. Api - APIDoc.md
 
 ## 🌐 Portas do Projeto
 - **Backend:** http://localhost:5173 (Node.js + PostgreSQL)
@@ -51,7 +54,5 @@ Os arquivos de inicialização do esquema são os que estão na pasta `\database
 1. Adicione o arquivo `.sql`na pasta `\database\init\` 
     *obs* você pode usar o pgAdmin para criar as tables e gerar o sql
 2. Limpe o volume do banco de dados: pode ser feito no Docker desktop ou utilizando o comando `docker compose down -v-`, que "baixa" os containers e remove todos os volumes.
-
-
 
 
