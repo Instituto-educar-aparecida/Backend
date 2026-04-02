@@ -5,6 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "node index.js"
   },
   "repository": {
@@ -29,15 +30,15 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
     "pg": "^8.18.0",
-    "react-router-dom": "^7.13.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "autoprefixer": "latest",
-    "cors": "latest",
-    "express": "latest",
     "postcss": "latest",
+    "react-router-dom": "^7.13.1",
     "tailwindcss": "latest",
     "vite": "^5.0.0"
   }

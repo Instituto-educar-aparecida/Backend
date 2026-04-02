@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import { addUser, findUserByEmail, getUsersDb, } from '../../database/UserDataAcess.js';
+import { registerSchema, loginSchema } from '../../domain/schemas.js';
 import jwt from 'jsonwebtoken'
 
 
@@ -8,18 +9,17 @@ const SecretKey = process.env.JWT_SECRET
     
     
 async function register (req, res){
-    const {name, email, senha} = req.body;
-    const role = 'aluno';
+    const validation = registerSchema.safeParse(req.body);
+
     
-    if(!name || !email || !senha ){
-       return res.status(400).json({message:"Campo obrigatório faltando."}); 
+    if(!validation.success){
+       return res.status(400).json({
+           message: "Dados inválidos", 
+           errors: validation.error.flatten().fieldErrors 
+       }); 
     }
-    if (role === "admin") {
-    return res.status(403).json({ message: "Cadastro de admin não permitido" });
-    }
-    if(role !== "aluno" && role !== "professor"){
-        return res.status(400).json({message:"Valor incorreto. Tente novamente!"})
-    }
+    const { name, email, senha } = validation.data;
+    const role = 'aluno';
     try {
         const hash = await bcrypt.hash(senha, 8)
         await addUser(name, email, hash, role)
@@ -32,27 +32,38 @@ async function register (req, res){
 }
 
 async function login(req, res){
-    const {email, senha} = req.body
+    const validation = loginSchema.safeParse(req.body);
     
-    if(!email||!senha){
-        return res.status(400).json({msg: "Campos obrigatórios em branco."});
+    if(!validation.success){
+        return res.status(400).json({
+            message: "Dados de login inválidos",
+            errors: validation.error.flatten().fieldErrors 
+        });
     }
+    
+    const { email, senha } = validation.data;
     try {
         const user = await findUserByEmail(email);
 
 
-        if(!user) return res.status(401).json({msg: "Usuário ou senha invalidos. Tente novamente."})
-        
+        if(!user) { 
+           return res.status(401).json({message: "Usuário ou senha invalidos. Tente novamente."})
+        }
         const senhaHash = await bcrypt.compare(senha, user.hash);
         
-        if(!senhaHash) return res.status(401).json({msg: "Usuário ou senha inválidos."});
-
+        if(!senhaHash) {
+           return res.status(401).json({msg: "Usuário ou senha inválidos."});
+        }
         const token = jwt.sign(
             {id: user.id, nome: user.name, role: user.role}, 
             SecretKey, 
             {expiresIn: "2h"}
         );
-        return res.status(200).json({token, role: user.role});
+        return res.status(200).json({
+            message: "Login realizado com sucesso", 
+            token, 
+            role: user.role
+        });
     } catch(err) {
         return res.status(500).json({message: "Erro interno"});
     }

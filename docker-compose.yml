@@ -1,66 +1,78 @@
 services:
-  app:
-    build: .
-    ports:
-      - "5173:5173"
-    restart: always  
-    volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      DB_HOST: db 
-      DB_USER: EducarDev
-      DB_PASSWORD: "271627"
-      DB_NAME: EducarDev
-      DB_PORT: 5432
-      JWT_SECRET: ${JWT_SECRET}
-    networks:
-      - pg-network
-    depends_on:
-        db:
-          condition: service_healthy 
-  
-  # configuração do container do postgres 
+  # 🐘 BANCO DE DADOS
   db:
-    image: postgres:16
-    command: postgres -c shared_buffers=256MB -c max_connections=200 -c listen_addresses='*'
-    ports:
-      - 5432:5432
+    image: postgres:16-alpine
+    container_name: db_educar
+    restart: always
     environment:
-      POSTGRES_PASSWORD: "271627"
-      POSTGRES_USER: EducarDev 
-      POSTGRES_DB: EducarDev
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./src/database/init:/docker-entrypoint-initdb.d
+      - ../Backend/src/database/init:/docker-entrypoint-initdb.d:ro
     networks:
-      - pg-network
+      - educar_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U EducarDev -d EducarDev"]
-      interval: 5s
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
-  # configuração do container do pgadmin 
-  pgadmin:
-    image: dpage/pgadmin4:latest
+  # ⚙️ BACKEND (Renomeado de 'app' para 'backend' para o Nginx achar)
+  backend:
+    build:
+      context: ../Backend
+    container_name: educar_api
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: Educar@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: ProjetoEducar
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=5173
+      - DB_HOST=db
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+    networks:
+      - educar_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # 🖥️ PGADMIN (De volta ao jogo)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: educar_pgadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
       - "8080:80"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
     networks:
-      - pg-network
+      - educar_network
     depends_on:
       - db
 
+  #  NGINX (O Porteiro)
+  nginx:
+    image: nginx:stable-alpine
+    container_name: educar_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - educar_network
+    depends_on:
+      - backend
+
 networks:
-  pg-network:
+  educar_network:
     driver: bridge
 
 volumes:
   pgdata:
-  pgadmin-data:
+

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public."lesson_progress"
     id BIGSERIAL PRIMARY KEY,
     user_id bigint NOT NULL,
     lesson_id bigint NOT NULL,
-    current_time float NOT NULL DEFAULT 0,
+    lesson_current_time float NOT NULL DEFAULT 0,
     duration float NOT NULL DEFAULT 0,
     percentage float NOT NULL DEFAULT 0,
     completed boolean NOT NULL DEFAULT false,
