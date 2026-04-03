@@ -30,4 +30,4 @@ export class ProgressoCurso{
     }
 }
 
-export default {Curso,aluno_status_em_curso}
+export default {ProgressoCurso,aluno_status_em_curso}

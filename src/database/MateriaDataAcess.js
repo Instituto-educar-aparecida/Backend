@@ -12,12 +12,12 @@ const pool = new Pool({
 
 export const addMateria = async (Materia) => {
     try{
-        const query = 'INSERT INTO "materia" (nome, descricao, professor_id) VALUES ($1, $2)';
-        const values = [Materia.name, Materia.descriacao, Materia.professor_id];
+        const query = 'INSERT INTO "materia" (nome, descricao, professor_id) VALUES ($1, $2, $3)';
+        const values = [Materia.name, Materia.descricao, Materia.professor_id];
         const res = await pool.query(query, values);
 
     }catch(err){
-        console.Log("Add Materia: erro ao tentar inserir materia.");
+        console.log("Add Materia: erro ao tentar inserir materia.");
     }
 }
 
@@ -31,7 +31,7 @@ export const removeUser = async (id) => {
     console.log("Inserido: %O", count);
   } 
   catch (err) {
-      console.Log("Remove: erro ao tentar remover materia.");    
+      console.log("Remove: erro ao tentar remover materia.");    
    
   } 
   finally{

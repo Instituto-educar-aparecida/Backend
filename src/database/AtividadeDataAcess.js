@@ -17,7 +17,7 @@ export const addMateria = async (Atividade) => {
         const res = await pool.query(query, values);
 
     }catch(err){
-        console.Log("Add Materia: erro ao tentar inserir materia.");
+        console.log("Add Materia: erro ao tentar inserir materia.");
     }
 }
 
@@ -31,7 +31,7 @@ export const removeUser = async (id) => {
     console.log("Inserido: %O", count);
   } 
   catch (err) {
-      console.Log("Remove: erro ao tentar remover atividade.");    
+      console.log("Remove: erro ao tentar remover atividade.");    
    
   } 
   finally{

@@ -15,7 +15,7 @@ export const addMateria = async (ProgressoCurso) => {
         const res = await pool.query(query, values);
 
     }catch(err){
-        console.Log("Add Curso: erro ao tentar inserir curso.");
+        console.log("Add Curso: erro ao tentar inserir curso.");
     }
 }
 
@@ -29,7 +29,7 @@ export const removeUser = async (id) => {
     console.log("Inserido: %O", count);
   } 
   catch (err) {
-      console.Log("Remove: erro ao tentar remover curso.");    
+      console.log("Remove: erro ao tentar remover curso.");    
    
   } 
   finally{

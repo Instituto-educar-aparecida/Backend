@@ -48,9 +48,7 @@ export const addUser = async (User) => {
   } 
   catch (err) {
       console.log("Add user: erro ao tentar inserir usuario");
-  } 
-  finally {
-    return {}; //se chegou no finally retorna vazio
+      return {};
   }
 };
 
@@ -67,7 +65,7 @@ export const removeUser = async (id) => {
     console.log("Inserido: %O", count);
   } 
   catch (err) {
-      console.Log("Add user: erro ao tentar remover usuario");    
+      console.log("Add user: erro ao tentar remover usuario");    
    
   } 
   finally{
