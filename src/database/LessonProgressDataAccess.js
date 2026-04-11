@@ -3,7 +3,7 @@ import { pool } from './UserDataAcess.js';
 export const saveProgress = async (progresso) => {
   try {
     const query = ` 
-      INSERT INTO "lesson_progress" (user_id, lesson_id, lesson_current_time, duration, percentage, completed, updated_at)
+      INSERT INTO "lesson_progress" (user_id, lesson_id, current_time, duration, percentage, completed, updated_at)
       VALUES ($1, $2, $3, $4, $5, $6, NOW())
       ON CONFLICT (user_id, lesson_id) DO UPDATE 
       SET current_time = $3, duration = $4, percentage = $5, completed = $6, updated_at = NOW()
