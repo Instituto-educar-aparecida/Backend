@@ -1,7 +1,7 @@
 import * as cursoDb from "./CursoDataAccess.js";
 
 export const cadastrar = async (curso) => {
-    curso.status = curso.status ?? "ativo";
+    curso.status = curso.status ?? curso_status.Programado;
     return await cursoDb.addCurso(curso);
 };
 
@@ -24,6 +24,10 @@ export const arquivarCurso = async (id) => {
 export const alterarStatus = async (id, novoStatus) => {
     const curso = await cursoDb.getCursoById(id);
     if (!curso) throw new Error("Curso não encontrado");
+
+    if(!Object.values(curso_status).includes(novoStatus)) {
+        throw new Error("status inválido");
+    }
 
     curso.status = novoStatus;
     return await cursoDb.updateCurso(curso);

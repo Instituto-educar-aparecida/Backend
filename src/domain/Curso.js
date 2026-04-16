@@ -1,7 +1,10 @@
 export const curso_status = Object.freeze({
-    Ativo: "ativo",
-    Inativo: "inativo",
-    Arquivado: "arquivado",
+    Programado: "Programado",
+    InscricoesAbertas: "Inscricoes Abertas",
+    AguardandoInicio: "Aguardando inicio",
+    Arquivado: "Arquivado",
+    EmAndamento: "Em andamento",
+    Cancelado: "Cancelado",
 });
 
 export class Curso {
@@ -11,7 +14,7 @@ export class Curso {
         carga_horaria = 0,
         nota = 0,
         imagem_capa = null,
-        status = curso_status.Ativo,
+        status = curso_status.Programado,
         matriculas_abertas = false,
         em_destaque = false
     }) {
