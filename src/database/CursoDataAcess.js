@@ -1,97 +1,134 @@
-import * as cursoDb from "./CursoDataAccess.js";
+import { pool } from "../UserDataAcess.js";
 
-export const cadastrar = async (curso) => {
-    curso.status = curso.status ?? curso_status.Programado;
-    return await cursoDb.addCurso(curso);
+export const addCurso = async (curso) => {
+    const query = `
+        INSERT INTO "curso"
+        (titulo, descricao, carga_horaria, nota, imagem_capa, status, matriculas_abertas, em_destaque)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+        RETURNING *;
+    `;
+
+    const values = [
+        curso.titulo,
+        curso.descricao,
+        curso.carga_horaria,
+        curso.nota,
+        curso.imagem_capa,
+        curso.status,
+        curso.matriculas_abertas,
+        curso.em_destaque
+    ];
+
+    const res = await pool.query(query, values);
+    return res.rows[0];
 };
 
-export const inserirModulo = async (moduloDb, modulo) => {
-    return await moduloDb.addModulo(modulo);
+export const removeCurso = async (id) => {
+    const res = await pool.query(
+        'DELETE FROM "curso" WHERE id = $1',
+        [id]
+    );
+    return res.rowCount > 0;
 };
 
-export const removerModulo = async (moduloDb, idModulo) => {
-    return await moduloDb.removeModulo(idModulo);
+export const getCursoById = async (id) => {
+    const res = await pool.query(
+        'SELECT * FROM "curso" WHERE id = $1',
+        [id]
+    );
+    return res.rows[0];
+};
+
+export const getCursos = async () => {
+    const res = await pool.query('SELECT * FROM "curso"');
+    return res.rows;
+};
+
+export const alterarStatus = async (id, status) => {
+    const res = await pool.query(
+        'UPDATE "curso" SET status = $1 WHERE id = $2 RETURNING *',
+        [status, id]
+    );
+    return res.rows[0];
 };
 
 export const arquivarCurso = async (id) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
-
-    curso.status = "arquivado";
-    return await cursoDb.updateCurso(curso);
+    return await alterarStatus(id, "Arquivado");
 };
 
-export const alterarStatus = async (id, novoStatus) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
+export const atualizarCurso = async (curso) => {
+    const query = `
+        UPDATE "curso"
+        SET titulo=$1,
+            descricao=$2,
+            carga_horaria=$3
+        WHERE id=$4
+        RETURNING *;
+    `;
 
-    if(!Object.values(curso_status).includes(novoStatus)) {
-        throw new Error("status inválido");
-    }
+    const values = [
+        curso.titulo,
+        curso.descricao,
+        curso.carga_horaria,
+        curso.id
+    ];
 
-    curso.status = novoStatus;
-    return await cursoDb.updateCurso(curso);
-};
-
-export const atualizarInformacoes = async (id, dados) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
-
-    curso.titulo = dados.titulo ?? curso.titulo;
-    curso.descricao = dados.descricao ?? curso.descricao;
-    curso.carga_horaria = dados.carga_horaria ?? curso.carga_horaria;
-
-    return await cursoDb.updateCurso(curso);
-};
-
-export const atualizarModulo = async (moduloDb, modulo) => {
-    return await moduloDb.updateModulo(modulo);
-};
-
-export const buscar = async (termo) => {
-    const cursos = await cursoDb.getCursos();
-
-    return cursos.filter(c =>
-        c.titulo.toLowerCase().includes(termo.toLowerCase()) ||
-        (c.descricao && c.descricao.toLowerCase().includes(termo.toLowerCase()))
-    );
-};
-
-export const detalhes = async (id, moduloDb) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
-
-    const modulos = await moduloDb.getModulosByCurso(id);
-
-    return {
-        ...curso,
-        modulos
-    };
+    const res = await pool.query(query, values);
+    return res.rows[0];
 };
 
 export const avaliarCurso = async (id, nota) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
-
-    curso.nota = nota;
-    return await cursoDb.updateCurso(curso);
-};
-
-export const getRelatorio = async (id, moduloDb) => {
-    const curso = await detalhes(id, moduloDb);
-
-    return {
-        titulo: curso.titulo,
-        status: curso.status,
-        nota: curso.nota,
-        totalModulos: curso.modulos.length
-    };
+    const res = await pool.query(
+        'UPDATE "curso" SET nota = $1 WHERE id = $2 RETURNING *',
+        [nota, id]
+    );
+    return res.rows[0];
 };
 
 export const destacarCurso = async (id) => {
-    const curso = await cursoDb.getCursoById(id);
-    if (!curso) throw new Error("Curso não encontrado");
+    const res = await pool.query(
+        'UPDATE "curso" SET em_destaque = true WHERE id = $1 RETURNING *',
+        [id]
+    );
+    return res.rows[0];
+};
 
-    curso.em_destaque = true;
-    return await cursoDb.updateCurso(curso);
+export const buscarCursos = async (termo) => {
+    const query = `
+        SELECT * FROM "curso"
+        WHERE LOWER(titulo) LIKE LOWER($1)
+        OR LOWER(descricao) LIKE LOWER($1)
+    `;
+
+    const res = await pool.query(query, [`%${termo}%`]);
+    return res.rows;
+};
+
+export const getCursoDetalhes = async (id) => {
+    const query = `
+        SELECT c.*, m.id as modulo_id, m.nome, m.descricao
+        FROM "curso" c
+        LEFT JOIN "modulo" m ON m.curso_id = c.id
+        WHERE c.id = $1
+    `;
+
+    const res = await pool.query(query, [id]);
+    return res.rows;
+};
+
+export const getRelatorioCurso = async (id) => {
+    const query = `
+        SELECT 
+            c.titulo,
+            c.status,
+            c.nota,
+            COUNT(m.id) as total_modulos
+        FROM "curso" c
+        LEFT JOIN "modulo" m ON m.curso_id = c.id
+        WHERE c.id = $1
+        GROUP BY c.id
+    `;
+
+    const res = await pool.query(query, [id]);
+    return res.rows[0];
 };
