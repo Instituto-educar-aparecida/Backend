@@ -1,22 +1,37 @@
 export const curso_status = Object.freeze({
-  Programado: "Programado",
-  InscricoesAbertas: "Inscricoes Abertas",
-  AguardandoInicio: "Aguardando inicio",
-  EmAndamento: "Em andamento",
-  Cancelado: "Cancelado",
+    Ativo: "ativo",
+    Inativo: "inativo",
+    Arquivado: "arquivado",
 });
 
 export class Curso {
-    constructor(titulo, materia_id, professor_id, status = curso_status.Programado) {
-        if(!titulo) throw new Error("titulo é obrigatório");
-        if(!materia_id) throw new Error("materia_id é obrigatório");
-        if(!professor_id) throw new Error("professor_id é obrigatório");
-        if(!Object.values(curso_status).includes(status)) throw new Error("status inválido");
+    constructor({
+        titulo,
+        descricao = null,
+        carga_horaria = 0,
+        nota = 0,
+        imagem_capa = null,
+        status = curso_status.Ativo,
+        matriculas_abertas = false,
+        em_destaque = false
+    }) {
+        if (!titulo) throw new Error("titulo é obrigatório");
+
+        if (carga_horaria < 0) throw new Error("carga horaria inválida");
+        if (nota < 0) throw new Error("nota inválida");
+
+        if (!Object.values(curso_status).includes(status)) {
+            throw new Error("status inválido");
+        }
 
         this.titulo = titulo;
-        this.materia_id = materia_id;
-        this.professor_id = professor_id;
+        this.descricao = descricao;
+        this.carga_horaria = carga_horaria;
+        this.nota = nota;
+        this.imagem_capa = imagem_capa;
         this.status = status;
+        this.matriculas_abertas = matriculas_abertas;
+        this.em_destaque = em_destaque;
     }
 }
 
