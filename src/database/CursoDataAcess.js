@@ -1,6 +1,6 @@
 import { pool } from "../UserDataAcess.js";
 
-export const addCurso = async (curso) => {
+export const cadastrar = async (curso) => {
     const query = `
         INSERT INTO "curso"
         (titulo, descricao, carga_horaria, nota, imagem_capa, status, matriculas_abertas, em_destaque)
@@ -23,7 +23,7 @@ export const addCurso = async (curso) => {
     return res.rows[0];
 };
 
-export const removeCurso = async (id) => {
+export const remover = async (id) => {
     const res = await pool.query(
         'DELETE FROM "curso" WHERE id = $1',
         [id]
@@ -31,7 +31,7 @@ export const removeCurso = async (id) => {
     return res.rowCount > 0;
 };
 
-export const getCursoById = async (id) => {
+export const obterPorId = async (id) => {
     const res = await pool.query(
         'SELECT * FROM "curso" WHERE id = $1',
         [id]
@@ -39,7 +39,7 @@ export const getCursoById = async (id) => {
     return res.rows[0];
 };
 
-export const getCursos = async () => {
+export const listar = async () => {
     const res = await pool.query('SELECT * FROM "curso"');
     return res.rows;
 };
@@ -56,7 +56,7 @@ export const arquivarCurso = async (id) => {
     return await alterarStatus(id, "Arquivado");
 };
 
-export const atualizarCurso = async (curso) => {
+export const atualizarInformacoes = async (curso) => {
     const query = `
         UPDATE "curso"
         SET titulo=$1,
@@ -93,7 +93,7 @@ export const destacarCurso = async (id) => {
     return res.rows[0];
 };
 
-export const buscarCursos = async (termo) => {
+export const buscar = async (termo) => {
     const query = `
         SELECT * FROM "curso"
         WHERE LOWER(titulo) LIKE LOWER($1)
@@ -104,7 +104,7 @@ export const buscarCursos = async (termo) => {
     return res.rows;
 };
 
-export const getCursoDetalhes = async (id) => {
+export const detalhes = async (id) => {
     const query = `
         SELECT c.*, m.id as modulo_id, m.nome, m.descricao
         FROM "curso" c
@@ -116,7 +116,7 @@ export const getCursoDetalhes = async (id) => {
     return res.rows;
 };
 
-export const getRelatorioCurso = async (id) => {
+export const getRelatorio = async (id) => {
     const query = `
         SELECT 
             c.titulo,
