@@ -1,24 +1,93 @@
-import { pool } from './UserDataAcess.js';
+import { pool } from "./UserDataAcess.js";
 
-export const addAtividade = async (atividade) => {
+export const addQuestaoAberta = async (id_atividade, imagem, numero, descricao) => {
   try {
-    const query = 'INSERT INTO "atividade" (titulo, materia_id, professor_id, status) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [atividade.titulo, atividade.materia_id, atividade.professor_id, atividade.status];
+    const query = `
+      INSERT INTO "QuestaoAberta" (id_atividade, imagem, numero, descricao)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *`;
+
+    const values = [id_atividade, imagem, numero, descricao];
     const res = await pool.query(query, values);
     return res.rows[0];
-  } catch(err) {
-    console.error("addAtividade:", err.message);
+  } catch (err) {
+    console.error("addQuestaoAberta:", err.message);
     throw err;
   }
 };
 
-export const removeAtividade = async (id) => {
-  try { 
-    const query = 'DELETE FROM "atividade" WHERE id = $1';
+export const updateQuestaoAberta = async (id, dados) => {
+  try {
+    const query = `
+      UPDATE "QuestaoAberta"
+      SET imagem = $1,
+          numero = $2,
+          descricao = $3
+      WHERE id = $4
+      RETURNING * `;
+    const values = [dados.imagem, dados.numero, dados.descricao, id];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  } catch (err) {
+    console.error("updateQuestaoAberta:", err.message);
+    throw err;
+  }
+};
+
+export const removeQuestaoAberta = async (id) => {
+  try {
+    const query = 'DELETE FROM "QuestaoAberta" WHERE id = $1';
     const res = await pool.query(query, [id]);
     return res.rowCount > 0;
-  } catch(err) {
-    console.error("removeAtividade:", err.message);
+  } catch (err) {
+    console.error("removeQuestaoAberta:", err.message);
+    throw err;
+  }
+};
+
+export const addQuestaoObjetiva = async (id_atividade, imagem, numero, descricao, alternativa, alternativa_correta) => {
+  try {
+    const query = `
+      INSERT INTO "QuestaoObjetiva" (id_atividade, imagem, numero, descricao, alternativa, alternativa_correta)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *`;
+
+    const values = [id_atividade, imagem, numero, descricao, JSON.stringify(alternativa), alternativa_correta];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  } catch (err) {
+    console.error("addQuestaoObjetiva:", err.message);
+    throw err;
+  }
+};
+
+export const updateQuestaoObjetiva = async (id, dados) => {
+  try {
+    const query = `
+      UPDATE "QuestaoObjetiva"
+      SET imagem = $1,
+          numero = $2,
+          descricao = $3,
+          alternativa = $4,
+          alternativa_correta = $5
+      WHERE id = $6
+      RETURNING * `;
+    const values = [dados.imagem, dados.numero, dados.descricao, JSON.stringify(dados.alternativa), dados.alternativa_correta, id];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+  } catch (err) {
+    console.error("updateQuestaoObjetiva:", err.message);
+    throw err;
+  }
+};
+
+export const removeQuestaoObjetiva = async (id) => {
+  try {
+    const query = 'DELETE FROM "QuestaoObjetiva" WHERE id = $1';
+    const res = await pool.query(query, [id]);
+    return res.rowCount > 0;
+  } catch (err) {
+    console.error("removeQuestaoObjetiva:", err.message);
     throw err;
   }
 };
