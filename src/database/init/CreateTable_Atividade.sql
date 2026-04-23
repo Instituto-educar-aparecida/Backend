@@ -1,19 +1,15 @@
--- Table: public.curso
-
--- DROP TABLE IF EXISTS public.curso;
-
--- Obs: usar Date.toISOString() para salvar Date como string e depois utilizar o parse para recuperar
+-- DROP TABLE IF EXISTS public."atividade";
 
 create table if not exists public."atividade"(
     id BIGSERIAL PRIMARY KEY,
-    titulo VARCHAR(50) NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
     modulo_id BIGINT NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'nao iniciado' CHECK (status IN ('nao iniciado','em andamento','concluido')),
+    "status" VARCHAR(20) NOT NULL DEFAULT 'nao iniciado' CHECK (status IN ('nao iniciado','em andamento','concluido')),
     qtdquestoes INT DEFAULT 0,
-    FOREIGN KEY (modulo_id) REFERENCES modoulo(id)
+    CONSTRAINT fk_atividade_modulo FOREIGN KEY (modulo_id) REFERENCES public."modulo"(id) ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;
 
-alter table if exists public."aula"
+alter table if exists public."atividade"
 OWNER to "EducarDev";
