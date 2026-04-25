@@ -2,7 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS public."user"(
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(45) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     role INT NOT NULL,
     senhahash TEXT NOT NULL,
