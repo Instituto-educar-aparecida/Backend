@@ -3,7 +3,7 @@ import { pool } from "./UserDataAcess.js";
 export const addQuestaoAberta = async (id_atividade, imagem, numero, descricao) => {
   try {
     const query = `
-      INSERT INTO "QuestaoAberta" (id_atividade, imagem, numero, descricao)
+      INSERT INTO "questao_aberta" (id_atividade, imagem, numero, descricao)
       VALUES ($1, $2, $3, $4)
       RETURNING *`;
 
@@ -19,7 +19,7 @@ export const addQuestaoAberta = async (id_atividade, imagem, numero, descricao) 
 export const updateQuestaoAberta = async (id, dados) => {
   try {
     const query = `
-      UPDATE "QuestaoAberta"
+      UPDATE "questao_aberta"
       SET imagem = $1,
           numero = $2,
           descricao = $3
@@ -36,7 +36,7 @@ export const updateQuestaoAberta = async (id, dados) => {
 
 export const removeQuestaoAberta = async (id) => {
   try {
-    const query = 'DELETE FROM "QuestaoAberta" WHERE id = $1';
+    const query = 'DELETE FROM "questao_aberta" WHERE id = $1';
     const res = await pool.query(query, [id]);
     return res.rowCount > 0;
   } catch (err) {
@@ -48,7 +48,7 @@ export const removeQuestaoAberta = async (id) => {
 export const addQuestaoObjetiva = async (id_atividade, imagem, numero, descricao, alternativa, alternativa_correta) => {
   try {
     const query = `
-      INSERT INTO "QuestaoObjetiva" (id_atividade, imagem, numero, descricao, alternativa, alternativa_correta)
+      INSERT INTO "questao_objetiva" (id_atividade, imagem, numero, descricao, alternativa, alternativa_correta)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`;
 
@@ -64,7 +64,7 @@ export const addQuestaoObjetiva = async (id_atividade, imagem, numero, descricao
 export const updateQuestaoObjetiva = async (id, dados) => {
   try {
     const query = `
-      UPDATE "QuestaoObjetiva"
+      UPDATE "questao_objetiva"
       SET imagem = $1,
           numero = $2,
           descricao = $3,
@@ -83,7 +83,7 @@ export const updateQuestaoObjetiva = async (id, dados) => {
 
 export const removeQuestaoObjetiva = async (id) => {
   try {
-    const query = 'DELETE FROM "QuestaoObjetiva" WHERE id = $1';
+    const query = 'DELETE FROM "questao_objetiva" WHERE id = $1';
     const res = await pool.query(query, [id]);
     return res.rowCount > 0;
   } catch (err) {
