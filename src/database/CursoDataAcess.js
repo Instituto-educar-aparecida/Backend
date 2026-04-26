@@ -1,3 +1,4 @@
+import { defaults } from "autoprefixer";
 import { pool } from "../UserDataAcess.js";
 
 export const cadastrar = async (curso) => {
@@ -132,3 +133,5 @@ export const getRelatorio = async (id) => {
     const res = await pool.query(query, [id]);
     return res.rows[0];
 };
+
+export default {cadastrar, atualizarInformacoes, remover}

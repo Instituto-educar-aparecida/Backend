@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {authenticateToken } from './MiddlewereRoutes.js';
 
 
-
 const router = Router();
 
 router.use(authenticateToken);
