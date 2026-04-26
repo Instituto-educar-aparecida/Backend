@@ -1,9 +1,8 @@
 export const roles = Object.freeze({
-  Admin: 'admin',
-  Aluno: 'aluno',
-  Professor: 'professor'
+    Admin: 1,
+    Aluno: 2,
+    Professor: 3
 });
-
 export class User {
     constructor(name, email, role, hash) {
         if(!name) throw new Error("name é obrigatório");

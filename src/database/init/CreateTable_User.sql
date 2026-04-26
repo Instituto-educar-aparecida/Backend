@@ -1,13 +1,15 @@
-CREATE TABLE IF NOT EXISTS public."user"
-(
+-- DROP TABLE IF EXISTS public."user";
+
+CREATE TABLE IF NOT EXISTS public."user"(
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(45) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    role INT NOT NULL,
     hash TEXT NOT NULL,
-    role VARCHAR(20) NOT NULL
+    ativa BOOLEAN DEFAULT TRUE
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."user"
-    OWNER to "EducarDev";
+OWNER TO "EducarDev";
