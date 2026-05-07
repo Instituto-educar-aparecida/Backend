@@ -1,11 +1,6 @@
 import { Router } from "express";
 import {cadastrar, atualizarInformacoes, remover} from '../../database/CursoDataAcess.js';
 
-/**
- * Construir rotas relacionadas a curso;
- * Avisar a Vini sobre a possibilidade de atualizar
- * as informações como emDestaque e matriculasAbertas.
- */
 
 async function addCurso(req, res){
     const{titulo, descricao, cargaHoraria, nota, imagemCapa, status, matriculasAbertas, emDestaque} = req.body;
@@ -42,5 +37,17 @@ async function deleteCurso(req, res){
         return res.status(200).json({msg:"Curso removido."})
     }catch{
         return res.status(500).json({msg:"Erro. Tente novamente."})
+    }
+}
+
+async function cadastrarAula (req, res){
+    const {duracao, descricao, link, moduloId, professorId} = req.body;
+    if(!duracao || !descricao || !link || !moduloId || !professorId){
+        return res.status(400).json({msg:"Campo obrigatório vazio."})
+    }
+    try{
+        
+    }catch{
+
     }
 }
