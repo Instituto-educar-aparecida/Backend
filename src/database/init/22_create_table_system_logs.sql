@@ -2,10 +2,10 @@
 
 CREATE TABLE IF NOT EXISTS public."system_logs" (
     id BIGSERIAL PRIMARY KEY,
-    level VARCHAR(20),
-    message TEXT,
+    level VARCHAR(20) NOT NULL,
+    message TEXT NOT NULL,
     context JSONB,
-    created_at TIMESTAMP DEFAULT now()
+    created_at TIMESTAMP NOT NULL DEFAULT now()
 )
 
 TABLESPACE pg_default;
