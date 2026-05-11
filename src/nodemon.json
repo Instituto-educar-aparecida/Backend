@@ -1,0 +1,6 @@
+{
+    "watch": ["src", "app.js", "sever.js"],
+    "ext": "js,json",
+    "ignore":["node_modules"],
+    "legacyWatch": true
+}

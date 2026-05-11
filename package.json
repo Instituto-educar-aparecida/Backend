@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "autoprefixer": "latest",
     "cors": "latest",
     "express": "latest",
+    "nodemon": "^3.1.14",
     "postcss": "latest",
     "tailwindcss": "latest",
     "vite": "^5.0.0"
