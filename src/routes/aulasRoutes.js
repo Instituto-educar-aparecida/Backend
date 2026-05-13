@@ -3,6 +3,14 @@ import { authenticateToken } from "./MiddlewereRoutes.js";
 import { saveProgress, getProgress, getCompleted } from "../database/LessonProgressDataAccess.js"
 
 
+// Rotas students para serem feitas:
+// POST /modules/:id/lessons
+// PUT /lessons/:id
+// DELETE /lessons/:id
+// POST /lessons/:id/progress
+
+
+
 const router = Router();
 
 router.use(authenticateToken);

@@ -2,6 +2,17 @@ import { Router } from 'express';
 import { login, register, getUsers } from './Controllers/authControllers.js';
 import { authenticateToken } from './MiddlewereRoutes.js';
 
+
+// Rotas auths para serem feitas:
+// POST /login
+// POST /logout
+// POST /forgot-password
+// POST /reset-password
+// GET /me
+
+
+
+
 const router = Router();
 
 router.post("/login", login);

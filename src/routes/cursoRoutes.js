@@ -2,6 +2,16 @@ import { Router } from "express";
 import {cadastrar, atualizarInformacoes, remover} from '../../database/CursoDataAcess.js';
 
 
+// Rotas curses para serem feitas:
+// POST /courses
+// GET /courses
+// GET /courses/:id
+// PUT /courses/:id
+// PATCH /courses/:id/status
+// PATCH /courses/:id/featured
+
+
+
 async function addCurso(req, res){
     const{titulo, descricao, cargaHoraria, nota, imagemCapa, status, matriculasAbertas, emDestaque} = req.body;
     if(!titulo || !descricao || !cargaHoraria || !nota || !imagemCapa || !status || !matriculasAbertas || !emDestaque){

@@ -1,5 +1,12 @@
 import {addModulo, removeModulo, updateModulo, getModuloById, getModulosByCurso} from './database/ModuloDataAcess.js';
 
+
+// Rotas modules para serem feitas:
+// POST /courses/:id/modules
+// PUT /modules/:id
+// DELETE /modules/:id
+
+
 async function adcModulo(req, res){
     const{nome, descricao, curso_id} = req.body;
     if(!nome || !descricao || !curso_id){

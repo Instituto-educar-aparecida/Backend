@@ -2,6 +2,13 @@ import { Router } from 'express';
 import {authenticateToken} from '../routes/MiddlewereRoutes.js'
 import {getUsersDb, VincProf} from '../database/UserDataAcess.js';
 
+// Rotas adim para serem feitas:
+// GET /admin/users
+// PATCH /admin/users/:id
+// PATCH /admin/users/:id/block
+// GET /admin/reports
+// GET /admin/audit
+
 
 const router = Router();
 

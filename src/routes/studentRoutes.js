@@ -1,6 +1,16 @@
 import { Router } from 'express';
 import {authenticateToken } from './MiddlewereRoutes.js';
 
+// Rotas students para serem feitas:
+// POST /student
+// PUT /student/profile
+// GET /student/courses
+// POST /student/enrollment
+// DELETE /student/enrollment
+// POST /student/course/review
+// GET /student/dashboard
+// GET /student/certificates
+
 
 const router = Router();
 
