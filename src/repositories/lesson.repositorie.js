@@ -1,4 +1,4 @@
-import { pool } from "./UserDataAcess.js";
+import { pool } from "./user.repositorie.js";
 
 export const addQuestaoAberta = async (id_atividade, imagem, numero, descricao) => {
   try {
