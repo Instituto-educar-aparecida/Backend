@@ -1,11 +1,11 @@
--- DROP TABLE IF EXISTS public."system_logs";
+--DROP TABLE IF EXISTS public."system_logs" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."system_logs" (
+CREATE TABLE IF NOT EXISTS public."system_logs"(
     id BIGSERIAL PRIMARY KEY,
     level VARCHAR(20) NOT NULL,
     message TEXT NOT NULL,
     context JSONB,
-    created_at TIMESTAMP NOT NULL DEFAULT now()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 )
 
 TABLESPACE pg_default;

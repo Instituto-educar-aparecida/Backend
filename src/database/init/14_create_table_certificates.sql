@@ -1,18 +1,34 @@
---DROP TABLE IF EXISTS public."certificates";
+--DROP TABLE IF EXISTS public."certificates" CASCADE;
 DROP TYPE IF EXISTS certificate_status CASCADE;
 
-CREATE TYPE certificate_status AS ENUM ('PENDING','ISSUED','REVOKED');
+CREATE TYPE certificate_status AS ENUM (
+    'PENDING',
+    'ISSUED',
+    'REVOKED'
+);
 
 CREATE TABLE IF NOT EXISTS public."certificates"(
     id BIGSERIAL PRIMARY KEY,
     student_id BIGINT NOT NULL,
     course_id BIGINT NOT NULL,
-    verification_code VARCHAR(100) UNIQUE NOT NULL,
+    verification_code VARCHAR(100) NOT NULL,
     pdf_url TEXT NOT NULL,
     issued_at TIMESTAMP NOT NULL DEFAULT NOW(),
     status certificate_status NOT NULL DEFAULT 'PENDING',
-    CONSTRAINT fk_certificates_users FOREIGN KEY (student_id) REFERENCES public."users"(id) ON DELETE CASCADE,
-    CONSTRAINT fk_certificates_courses FOREIGN KEY (course_id) REFERENCES public."courses"(id) ON DELETE CASCADE
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_certificates_verification_code
+        UNIQUE(verification_code),
+
+    CONSTRAINT fk_certificates_users
+        FOREIGN KEY (student_id)
+        REFERENCES public."users"(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_certificates_courses
+        FOREIGN KEY (course_id)
+        REFERENCES public."courses"(id)
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;

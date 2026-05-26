@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public."questao_aberta";
+DROP TABLE IF EXISTS public."questao_aberta" CASCADE;
 
 CREATE TABLE IF NOT EXISTS public."open_questions"(
     id BIGSERIAL PRIMARY KEY,
@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXISTS public."open_questions"(
     description TEXT NOT NULL,
     image_url TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_openquestions_activities FOREIGN KEY (activity_id) REFERENCES public."activities"(id) ON DELETE CASCADE
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT fk_open_questions_activities
+        FOREIGN KEY (activity_id)
+        REFERENCES public."activities"(id)
+        ON DELETE CASCADE
 )
 
 TABLESPACE pg_default;

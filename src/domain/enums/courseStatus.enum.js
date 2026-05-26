@@ -1,0 +1,6 @@
+export const COURSE_STATUS = {
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    ARCHIVED: 'ARCHIVED'
+};
