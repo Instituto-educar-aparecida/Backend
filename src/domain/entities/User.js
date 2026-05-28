@@ -1,20 +1,37 @@
-export const roles = Object.freeze({
-    Admin: 1,
-    Aluno: 2,
-    Professor: 3
-});
-export class User {
-    constructor(name, email, role, hash) {
-        if(!name) throw new Error("name é obrigatório");
-        if(!email) throw new Error("email é obrigatório");
-        if(!hash) throw new Error("hash é obrigatório");
-        if(!Object.values(roles).includes(role)) throw new Error("role inválido");
+import { USER_ROLE } from '../enums/userRole.enum.js';
 
-        this.name = name;
-        this.email = email;
-        this.role = role;
-        this.hash = hash;
+export class User {
+    constructor(data) {
+
+        if (!data.name) {
+            throw new Error('name is required');
+        }
+
+        if (!data.email) {
+            throw new Error('email is required');
+        }
+
+        if (!data.passwordHash) {
+            throw new Error('passwordHash is required');
+        }
+
+        if (!Object.values(USER_ROLE).includes(data.role)) {
+            throw new Error('invalid role');
+        }
+
+        this.id = data.id || null;
+        this.name = data.name;
+        this.email = data.email;
+        this.passwordHash = data.passwordHash;
+        this.avatarUrl = data.avatarUrl || null;
+        this.bio = data.bio || null;
+        this.phone = data.phone || null;
+        this.role = data.role;
+        this.active = data.active ?? true;
+        this.deletedAt = data.deletedAt || null;
+        this.createdAt = data.createdAt || new Date();
+        this.updatedAt = data.updatedAt || new Date();
     }
 }
 
-export default { User, roles };
+export default {User}

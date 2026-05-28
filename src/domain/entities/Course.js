@@ -1,41 +1,35 @@
-export const curso_status = Object.freeze({
-    Programado: "Programado",
-    InscricoesAbertas: "Inscricoes Abertas",
-    AguardandoInicio: "Aguardando inicio",
-    Arquivado: "Arquivado",
-    EmAndamento: "Em andamento",
-    Cancelado: "Cancelado",
-});
+import { COURSE_STATUS } from '../enums/courseStatus.enum.js';
 
-export class Curso {
-    constructor({
-        titulo,
-        descricao = null,
-        carga_horaria = 0,
-        nota = 0,
-        imagem_capa = null,
-        status = curso_status.Programado,
-        matriculas_abertas = false,
-        em_destaque = false
-    }) {
-        if (!titulo) throw new Error("titulo é obrigatório");
+export class Course{
+    constructor(data){
 
-        if (carga_horaria < 0) throw new Error("carga horaria inválida");
-        if (nota < 0) throw new Error("nota inválida");
-
-        if (!Object.values(curso_status).includes(status)) {
-            throw new Error("status inválido");
+        if (!data.title) {
+            throw new Error('title is required');
         }
 
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.carga_horaria = carga_horaria;
-        this.nota = nota;
-        this.imagem_capa = imagem_capa;
-        this.status = status;
-        this.matriculas_abertas = matriculas_abertas;
-        this.em_destaque = em_destaque;
+        if (!data.description) {
+            throw new Error('description is required');
+        }
+
+        if (!Object.values(COURSE_STATUS).includes(data.status)) {
+            throw new Error('invalid course status');
+        }
+
+        this.id = data.id || null;
+        this.title = data.title;
+        this.description = data.description;
+        this.syllabus = data.syllabus;
+        this.programContent = data.programContent;
+        this.prerequisites = data.prerequisites || null;
+        this.targetAudience = data.targetAudience || null;
+        this.certificationInfo = data.certificationInfo || null;
+        this.workloadHours = data.workloadHours;
+        this.thumbnailUrl = data.thumbnailUrl;
+        this.status = data.status;
+        this.featured = data.featured ?? false;
+        this.enrollmentOpen = data.enrollmentOpen ?? true;
+        this.instructorId = data.instructorId;
+        this.createdAt = data.createdAt || new Date();
+        this.updateAt = data.updateAt || new Date();
     }
 }
-
-export default { Curso, curso_status };

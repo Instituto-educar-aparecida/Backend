@@ -1,16 +1,17 @@
-export class Modulo {
-    constructor({
-        nome,
-        descricao = null,
-        curso_id
-    }) {
-        if (!nome) throw new Error("nome é obrigatório");
-        if (!curso_id) throw new Error("curso_id é obrigatório");
+export class Module {
+    constructor(data) {
 
-        this.nome = nome;
-        this.descricao = descricao;
-        this.curso_id = curso_id;
+        if (!data.name) {
+            throw new Error('name is required');
+        }
+
+        this.id = data.id || null;
+        this.name = data.name;
+        this.description = data.description;
+        this.courseId = data.courseId;
+        this.order = data.order || 0;
+        this.createdAt = data.createdAt || new Date();
     }
 }
 
-export default { Modulo };
+export default { Module };

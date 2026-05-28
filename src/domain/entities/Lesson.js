@@ -1,15 +1,19 @@
-export class Atividade {
-    constructor(titulo, modulo_id, professor_id = -1, qtdquestoes = 0, status = 'nao iniciado', id = null) {
-        if(!titulo) throw new Error("titulo é obrigatório");
-        if(!modulo_id) throw new Error("modulo_id é obrigatório");
+export class Lesson {
+    constructor(data) {
 
-        this.id =id;
-        this.titulo = titulo;
-        this.modulo_id = modulo_id;
-        this.professor_id = professor_id;
-        this.qtdquestoes = qtdquestoes;
-        this.status = status;
+        if (!data.title) {
+            throw new Error('title is required');
+        }
+
+        this.id = data.id || null;
+        this.title = data.title;
+        this.description = data.description;
+        this.duration = data.duration;
+        this.videoUrl = data.videoUrl;
+        this.moduleId = data.moduleId;
+        this.teacherId = data.teacherId;
+        this.createdAt = data.createdAt || new Date();
     }
 }
 
-export default { Atividade };
+export default { Lesson };
