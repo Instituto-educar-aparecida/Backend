@@ -1,0 +1,5 @@
+export const ACTIVITY_STATUS = {
+    DRAFT: 'DRAFT',
+    PUBLISHED: 'PUBLISHED',
+    CLOSED: 'CLOSED'
+}

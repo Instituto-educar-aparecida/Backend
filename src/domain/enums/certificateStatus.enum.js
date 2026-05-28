@@ -1,0 +1,5 @@
+export const CERTIFICATE_STATUS = {
+    PENDING: 'PENDING',
+    ISSUED: 'ISSUED',
+    REVOKED: 'REVOKED'
+}

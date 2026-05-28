@@ -1,0 +1,5 @@
+export const ENROLLMENT_STATUS = {
+    ACTIVE: 'ACTIVE',
+    COMPLETED: 'COMPLETED',
+    CLOSED: 'CANCELLED'
+}
