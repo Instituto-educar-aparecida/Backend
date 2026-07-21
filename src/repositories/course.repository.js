@@ -1,137 +1,130 @@
-import { defaults } from "autoprefixer";
-import { pool } from "../UserDataAcess.js";
+// Acesso à tabela "courses".
+import { pool } from '../config/db.js';
 
-export const cadastrar = async (curso) => {
+const FIELDS = `id, title, description, syllabus, program_content, prerequisites,
+    target_audience, certification_info, workload_hours, thumbnail_url, status,
+    featured, enrollment_open, instructor_id, created_at, updated_at`;
+
+// Cria um novo curso.
+export const createCourse = async (data) => {
     const query = `
-        INSERT INTO "curso"
-        (titulo, descricao, carga_horaria, nota, imagem_capa, status, matriculas_abertas, em_destaque)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-        RETURNING *;
+        INSERT INTO "courses"
+        (title, description, syllabus, program_content, prerequisites, target_audience,
+         certification_info, workload_hours, thumbnail_url, status, featured, enrollment_open, instructor_id)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+        RETURNING ${FIELDS};
     `;
-
     const values = [
-        curso.titulo,
-        curso.descricao,
-        curso.carga_horaria,
-        curso.nota,
-        curso.imagem_capa,
-        curso.status,
-        curso.matriculas_abertas,
-        curso.em_destaque
+        data.title, data.description, data.syllabus, data.program_content,
+        data.prerequisites ?? null, data.target_audience ?? null, data.certification_info ?? null,
+        data.workload_hours, data.thumbnail_url ?? null, data.status ?? 'PENDING',
+        data.featured ?? false, data.enrollment_open ?? true, data.instructor_id,
     ];
-
     const res = await pool.query(query, values);
     return res.rows[0];
 };
 
-export const remover = async (id) => {
+// Busca curso por id (não excluído).
+export const findById = async (id) => {
     const res = await pool.query(
-        'DELETE FROM "curso" WHERE id = $1',
-        [id]
-    );
-    return res.rowCount > 0;
-};
-
-export const obterPorId = async (id) => {
-    const res = await pool.query(
-        'SELECT * FROM "curso" WHERE id = $1',
+        `SELECT ${FIELDS} FROM "courses" WHERE id = $1 AND deleted_at IS NULL`,
         [id]
     );
     return res.rows[0];
 };
 
-export const listar = async () => {
-    const res = await pool.query('SELECT * FROM "curso"');
+// Lista/pesquisa cursos com filtros opcionais (catálogo público).
+// filtros: { search, status, featured, instructorId, onlyOpen }
+export const listCourses = async (filtros = {}) => {
+    const conditions = ['deleted_at IS NULL'];
+    const values = [];
+
+    if (filtros.search) {
+        values.push(`%${filtros.search}%`);
+        conditions.push(`(LOWER(title) LIKE LOWER($${values.length}) OR LOWER(description) LIKE LOWER($${values.length}))`);
+    }
+    if (filtros.status) {
+        values.push(filtros.status);
+        conditions.push(`status = $${values.length}`);
+    }
+    if (filtros.featured !== undefined) {
+        values.push(filtros.featured);
+        conditions.push(`featured = $${values.length}`);
+    }
+    if (filtros.instructorId) {
+        values.push(filtros.instructorId);
+        conditions.push(`instructor_id = $${values.length}`);
+    }
+    if (filtros.onlyOpen) {
+        conditions.push('enrollment_open = TRUE');
+    }
+
+    const query = `
+        SELECT ${FIELDS},
+            (SELECT COUNT(*) FROM "enrollments" e WHERE e.course_id = courses.id AND e.status <> 'CANCELLED') AS enrollment_count,
+            (SELECT ROUND(AVG(rating), 2) FROM "course_reviews" r WHERE r.course_id = courses.id) AS average_rating
+        FROM "courses"
+        WHERE ${conditions.join(' AND ')}
+        ORDER BY featured DESC, created_at DESC;
+    `;
+    const res = await pool.query(query, values);
     return res.rows;
 };
 
-export const alterarStatus = async (id, status) => {
+// Atualiza informações do curso dinamicamente.
+export const updateCourse = async (id, fields) => {
+    const allowed = ['title', 'description', 'syllabus', 'program_content', 'prerequisites',
+        'target_audience', 'certification_info', 'workload_hours', 'thumbnail_url', 'enrollment_open'];
+    const sets = [];
+    const values = [];
+
+    for (const key of allowed) {
+        if (fields[key] !== undefined) {
+            values.push(fields[key]);
+            sets.push(`${key} = $${values.length}`);
+        }
+    }
+    if (sets.length === 0) return findById(id);
+
+    sets.push('updated_at = NOW()');
+    values.push(id);
+
+    const query = `
+        UPDATE "courses" SET ${sets.join(', ')}
+        WHERE id = $${values.length} AND deleted_at IS NULL
+        RETURNING ${FIELDS};
+    `;
+    const res = await pool.query(query, values);
+    return res.rows[0];
+};
+
+// Altera o status do curso (aprovar, arquivar, rejeitar, etc.).
+export const updateStatus = async (id, status) => {
     const res = await pool.query(
-        'UPDATE "curso" SET status = $1 WHERE id = $2 RETURNING *',
+        `UPDATE "courses" SET status = $1, updated_at = NOW() WHERE id = $2 AND deleted_at IS NULL RETURNING ${FIELDS}`,
         [status, id]
     );
     return res.rows[0];
 };
 
-export const arquivarCurso = async (id) => {
-    return await alterarStatus(id, "Arquivado");
-};
-
-export const atualizarInformacoes = async (curso) => {
-    const query = `
-        UPDATE "curso"
-        SET titulo=$1,
-            descricao=$2,
-            carga_horaria=$3
-        WHERE id=$4
-        RETURNING *;
-    `;
-
-    const values = [
-        curso.titulo,
-        curso.descricao,
-        curso.carga_horaria,
-        curso.id
-    ];
-
-    const res = await pool.query(query, values);
-    return res.rows[0];
-};
-
-export const avaliarCurso = async (id, nota) => {
+// Define se o curso está em destaque.
+export const updateFeatured = async (id, featured) => {
     const res = await pool.query(
-        'UPDATE "curso" SET nota = $1 WHERE id = $2 RETURNING *',
-        [nota, id]
+        `UPDATE "courses" SET featured = $1, updated_at = NOW() WHERE id = $2 AND deleted_at IS NULL RETURNING ${FIELDS}`,
+        [featured, id]
     );
     return res.rows[0];
 };
 
-export const destacarCurso = async (id) => {
+// Exclusão lógica do curso.
+export const softDelete = async (id) => {
     const res = await pool.query(
-        'UPDATE "curso" SET em_destaque = true WHERE id = $1 RETURNING *',
+        'UPDATE "courses" SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL RETURNING id',
         [id]
     );
-    return res.rows[0];
+    return res.rowCount > 0;
 };
 
-export const buscar = async (termo) => {
-    const query = `
-        SELECT * FROM "curso"
-        WHERE LOWER(titulo) LIKE LOWER($1)
-        OR LOWER(descricao) LIKE LOWER($1)
-    `;
-
-    const res = await pool.query(query, [`%${termo}%`]);
-    return res.rows;
+export default {
+    createCourse, findById, listCourses, updateCourse, updateStatus, updateFeatured, softDelete,
 };
-
-export const detalhes = async (id) => {
-    const query = `
-        SELECT c.*, m.id as modulo_id, m.nome, m.descricao
-        FROM "curso" c
-        LEFT JOIN "modulo" m ON m.curso_id = c.id
-        WHERE c.id = $1
-    `;
-
-    const res = await pool.query(query, [id]);
-    return res.rows;
-};
-
-export const getRelatorio = async (id) => {
-    const query = `
-        SELECT 
-            c.titulo,
-            c.status,
-            c.nota,
-            COUNT(m.id) as total_modulos
-        FROM "curso" c
-        LEFT JOIN "modulo" m ON m.curso_id = c.id
-        WHERE c.id = $1
-        GROUP BY c.id
-    `;
-
-    const res = await pool.query(query, [id]);
-    return res.rows[0];
-};
-
-export default {cadastrar, atualizarInformacoes, remover}

@@ -1,42 +1,54 @@
-import { pool } from './UserDataAcess.js';
+// Acesso à tabela "lesson_progress".
+// Corrigido para usar os campos reais do schema: student_id, watch_seconds,
+// status (enum progress_status) e completed_at.
+import { pool } from '../config/db.js';
 
-export const saveProgress = async (progresso) => {
-  try {
-    const query = ` 
-      INSERT INTO "lesson_progress" (user_id, lesson_id, current_time, duration, percentage, completed, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW())
-      ON CONFLICT (user_id, lesson_id) DO UPDATE 
-      SET current_time = $3, duration = $4, percentage = $5, completed = $6, updated_at = NOW()
-      RETURNING *;
+// Salva/atualiza o progresso de uma aula para um aluno (upsert).
+export const saveProgress = async ({ student_id, lesson_id, watch_seconds = 0, status = 'IN_PROGRESS' }) => {
+    const completedAt = status === 'COMPLETED' ? 'NOW()' : 'NULL';
+    const query = `
+        INSERT INTO "lesson_progress" (student_id, lesson_id, watch_seconds, status, completed_at, updated_at)
+        VALUES ($1, $2, $3, $4, ${completedAt}, NOW())
+        ON CONFLICT (student_id, lesson_id) DO UPDATE
+        SET watch_seconds = EXCLUDED.watch_seconds,
+            status = EXCLUDED.status,
+            completed_at = ${completedAt},
+            updated_at = NOW()
+        RETURNING *;
     `;
-    const values = [progresso.user_id, progresso.lesson_id, progresso.current_time, progresso.duration, progresso.percentage, progresso.completed];
-    const res = await pool.query(query, values);
+    const res = await pool.query(query, [student_id, lesson_id, watch_seconds, status]);
     return res.rows[0];
-  } catch(err) {
-    console.error("saveProgress:", err.message);
-    throw err;
-  }
 };
 
-export const getProgress = async (user_id, lesson_id) => {
-  try {
-    const query = 'SELECT * FROM "lesson_progress" WHERE user_id = $1 AND lesson_id = $2';
-    const res = await pool.query(query, [user_id, lesson_id]);
+// Obtém o progresso de uma aula específica para um aluno.
+export const getProgress = async (studentId, lessonId) => {
+    const res = await pool.query(
+        'SELECT * FROM "lesson_progress" WHERE student_id = $1 AND lesson_id = $2',
+        [studentId, lessonId]
+    );
     return res.rows[0];
-  } catch(err) {
-    console.error("getProgress:", err.message);
-    throw err;
-  }
 };
 
-export const getCompleted = async (user_id) => {
-  try {
-    const query = 'SELECT * FROM "lesson_progress" WHERE user_id = $1 AND completed = true';
-    const res = await pool.query(query, [user_id]);
+// Lista as aulas concluídas por um aluno.
+export const getCompleted = async (studentId) => {
+    const res = await pool.query(
+        `SELECT * FROM "lesson_progress" WHERE student_id = $1 AND status = 'COMPLETED'`,
+        [studentId]
+    );
     return res.rows;
-  } catch(err) {
-    console.error("getCompleted:", err.message);
-    throw err;
-  }
 };
 
+// Conta quantas aulas de um curso o aluno concluiu (para cálculo de progresso).
+export const countCompletedByCourse = async (studentId, courseId) => {
+    const res = await pool.query(
+        `SELECT COUNT(lp.id)::int AS total
+         FROM "lesson_progress" lp
+         JOIN "lessons" l ON l.id = lp.lesson_id
+         JOIN "modules" m ON m.id = l.module_id
+         WHERE lp.student_id = $1 AND m.course_id = $2 AND lp.status = 'COMPLETED'`,
+        [studentId, courseId]
+    );
+    return res.rows[0].total;
+};
+
+export default { saveProgress, getProgress, getCompleted, countCompletedByCourse };
