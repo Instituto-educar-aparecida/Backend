@@ -1,63 +1,103 @@
-import { Router } from "express";
-import {cadastrar, atualizarInformacoes, remover} from '../../database/CursoDataAcess.js';
+import { Router } from 'express';
 
+import * as courseController
+    from '../Controllers/courseController.js';
 
-// Rotas curses para serem feitas:
-// POST /courses
-// GET /courses
-// GET /courses/:id
-// PUT /courses/:id
-// PATCH /courses/:id/status
-// PATCH /courses/:id/featured
+import {
+    authenticateToken,
+    authorizeRoles
+} from '../middlewares/MiddlewereRoutes.js';
 
+import { validate }
+    from '../utils/validate.js';
 
+import { USER_ROLE }
+    from '../domain/enums/userRole.enum.js';
 
-async function addCurso(req, res){
-    const{titulo, descricao, cargaHoraria, nota, imagemCapa, status, matriculasAbertas, emDestaque} = req.body;
-    if(!titulo || !descricao || !cargaHoraria || !nota || !imagemCapa || !status || !matriculasAbertas || !emDestaque){
-        return res.status(400).json({msg: "Campo obrigatorio faltando"})
-    }
-    
-    try{
-        await cadastrar(titulo, descricao, cargaHoraria, nota, imagemCapa, status, matriculasAbertas, emDestaque);
-        return res.status(201).json({msg:"Curso criado com sucesso!"})
-    }catch{
+import {
+    createCourseSchema,
+    updateCourseSchema,
+    courseStatusSchema,
+    courseFeaturedSchema
+} from '../validators/course.schema.js';
 
-    }
-}
+import {
+    createModuleSchema
+} from '../validators/module.schema.js';
 
-async function updateCurso(req, res){
-    const {titulo, descricao, cargaHoraria, id} = req.body;
-    if(!titulo || !descricao || !cargaHoraria || !id ){
-     return res.status(400).json({msg:"Campo obrigatorio em branco."})   
-    }
+const router = Router();
 
-    try{
-        await atualizarInformacoes(titulo, descricao, cargaHoraria, id)
-        return res.status(200).json({msg:"Atualizado com sucesso."})
-    }catch{
+/*
+ * Rotas públicas
+ */
 
-    }
-}
+router.get(
+    '/',
+    courseController.listCourses
+);
 
-async function deleteCurso(req, res){
-    const {id} = req.body;
-    try{
-        await remover(id);
-        return res.status(200).json({msg:"Curso removido."})
-    }catch{
-        return res.status(500).json({msg:"Erro. Tente novamente."})
-    }
-}
+router.get(
+    '/:id',
+    courseController.getCourse
+);
 
-async function cadastrarAula (req, res){
-    const {duracao, descricao, link, moduloId, professorId} = req.body;
-    if(!duracao || !descricao || !link || !moduloId || !professorId){
-        return res.status(400).json({msg:"Campo obrigatório vazio."})
-    }
-    try{
-        
-    }catch{
+/*
+ * A partir daqui exige autenticação
+ */
 
-    }
-}
+router.use(authenticateToken);
+
+router.post(
+    '/',
+    authorizeRoles(
+        USER_ROLE.INSTRUCTOR,
+        USER_ROLE.ADMIN
+    ),
+    validate(createCourseSchema),
+    courseController.createCourse
+);
+
+router.put(
+    '/:id',
+    authorizeRoles(
+        USER_ROLE.INSTRUCTOR,
+        USER_ROLE.ADMIN
+    ),
+    validate(updateCourseSchema),
+    courseController.updateCourse
+);
+
+router.delete(
+    '/:id',
+    authorizeRoles(
+        USER_ROLE.INSTRUCTOR,
+        USER_ROLE.ADMIN
+    ),
+    courseController.deleteCourse
+);
+
+router.post(
+    '/:id/modules',
+    authorizeRoles(
+        USER_ROLE.INSTRUCTOR,
+        USER_ROLE.ADMIN
+    ),
+    validate(createModuleSchema),
+    courseController.createModule
+);
+
+router.patch(
+    '/:id/status',
+    authorizeRoles(USER_ROLE.ADMIN),
+    validate(courseStatusSchema),
+    courseController.updateStatus
+);
+
+router.patch(
+    '/:id/featured',
+    authorizeRoles(USER_ROLE.ADMIN),
+    validate(courseFeaturedSchema),
+    courseController.updateFeatured
+);
+
+export default router;

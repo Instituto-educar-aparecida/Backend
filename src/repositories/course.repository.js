@@ -55,7 +55,7 @@ export const listCourses = async (filtros = {}) => {
         values.push(filtros.instructorId);
         conditions.push(`instructor_id = $${values.length}`);
     }
-    if (filtros.onlyOpen) {
+    if (filtros.onlyOpen === true) {
         conditions.push('enrollment_open = TRUE');
     }
 
