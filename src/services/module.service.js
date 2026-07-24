@@ -5,6 +5,7 @@ import {
 } from './course.service.js';
 import { AppError } from '../utils/AppError.js';
 
+
 export const getModuleOrFail = async (id) => {
     const module = await moduleRepo.findById(id);
 

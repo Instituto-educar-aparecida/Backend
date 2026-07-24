@@ -1,6 +1,9 @@
 import { Router } from 'express';
-import { authenticateToken } from './MiddlewereRoutes.js';
-import { dashboard, getMateria } from './Controllers/professorController.js';
+import {
+    authenticateToken,
+    authorizeRoles
+} from '../middlewares/MiddlewereRoutes.js';
+import { dashboard, getMateria } from '../Controllers/instructorController.js';
 
 const router = Router();
 
