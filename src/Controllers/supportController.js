@@ -28,7 +28,7 @@ export const addMessage = asyncHandler(async (req, res) => {
 
 // PATCH /api/support/tickets/:id/status — atualiza o status (staff).
 export const updateStatus = asyncHandler(async (req, res) => {
-    const data = await supportService.updateStatus(req.params.id, req.body.status);
+    const data = await supportService.updateStatus(req.user, req.params.id, req.body.status);
     res.status(200).json({ status: 'success', message: 'Status atualizado.', data });
 });
 
