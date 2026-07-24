@@ -1,66 +1,34 @@
 import { Router } from 'express';
 
-import * as studentController from '../Controllers/studentController.js';
+import * as instructorController
+    from '../Controllers/instructorController.js';
+
 import {
     authenticateToken,
     authorizeRoles
 } from '../middlewares/MiddlewereRoutes.js';
-import { validate } from '../utils/validate.js';
-import {
-    updateProfileSchema,
-    enrollmentSchema,
-    reviewSchema
-} from '../validators/student.schema.js';
+
+import { USER_ROLE }
+    from '../domain/enums/userRole.enum.js';
 
 const router = Router();
 
 router.use(
     authenticateToken,
-    authorizeRoles('STUDENT', 'aluno')
-);
-
-router.get('/', (req, res) => {
-    res.status(200).json({
-        msg: 'Área do estudante funcionando.'
-    });
-});
-
-router.put(
-    '/profile',
-    validate(updateProfileSchema),
-    studentController.updateProfile
+    authorizeRoles(
+        USER_ROLE.INSTRUCTOR,
+        USER_ROLE.ADMIN
+    )
 );
 
 router.get(
     '/dashboard',
-    studentController.getDashboard
+    instructorController.getDashboard
 );
 
 router.get(
     '/courses',
-    studentController.getMyCourses
-);
-
-router.get(
-    '/courses/:courseId/progress',
-    studentController.getCourseProgress
-);
-
-router.post(
-    '/enrollments',
-    validate(enrollmentSchema),
-    studentController.enroll
-);
-
-router.delete(
-    '/enrollments/:courseId',
-    studentController.cancelEnrollment
-);
-
-router.post(
-    '/reviews',
-    validate(reviewSchema),
-    studentController.reviewCourse
+    instructorController.getMyCourses
 );
 
 export default router;
