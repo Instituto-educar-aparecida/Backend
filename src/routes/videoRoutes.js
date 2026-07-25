@@ -1,11 +1,11 @@
 import express from 'express';
-import { authenticateToken } from './MiddlewereRoutes.js';
+// Caminho corrigido para buscar o middleware na pasta correta fora de routes
+import { authenticateToken } from '../middlewares/MiddlewereRoutes.js';
 
 const router = express.Router();
 
-
-
 router.use(authenticateToken);
+
 router.get('/data/:videoId', (req, res) => {
   const { videoId } = req.params;
   
@@ -20,3 +20,4 @@ router.get('/data/:videoId', (req, res) => {
 });
 
 export default router;
+

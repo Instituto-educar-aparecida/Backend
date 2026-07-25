@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { authenticateToken } from './MiddlewereRoutes.js';
-import { dashboard, getMateria } from './Controllers/professorController.js';
+// Caminho corrigido para buscar o middleware na pasta correta
+import { authenticateToken } from '../middlewares/MiddlewereRoutes.js';
+// Caminho corrigido para buscar o controller na pasta correta voltando um nível
+import { dashboard, getMateria } from '../Controllers/professorController.js';
 
 const router = Router();
 

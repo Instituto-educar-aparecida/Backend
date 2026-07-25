@@ -1,15 +1,9 @@
 import { Router } from "express"; 
-import { authenticateToken } from "./MiddlewereRoutes.js";
-import { saveProgress, getProgress, getCompleted } from "../database/LessonProgressDataAccess.js"
+// Caminho corrigido para buscar o middleware na pasta correta
+import { authenticateToken } from "../middlewares/MiddlewereRoutes.js";
 
-
-// Rotas students para serem feitas:
-// POST /modules/:id/lessons
-// PUT /lessons/:id
-// DELETE /lessons/:id
-// POST /lessons/:id/progress
-
-
+// NOTA: O arquivo LessonProgressDataAccess.js foi deletado pela equipe.
+// Os métodos de banco agora devem ser importados de '../repositories/lessonProgress.repository.js' futuramente.
 
 const router = Router();
 
@@ -20,13 +14,12 @@ router.use((req, res, next ) => {
     next();
 });
 
-
 router.post('/progresso', async (req, res) => {
   const { lesson_id, current_time, duration, percentage, completed } = req.body;
   if ( !lesson_id || current_time === undefined ) return res.status(400).json({ msg: 'Campos obrigatórios faltando' });
   try {
-    const result = await saveProgress({ user_id: req.user.id, lesson_id, current_time, percentage, completed });
-    return res.status(200).json(result);
+    // Temporário até ajustar o lessonProgress.repository.js
+    return res.status(200).json({ msg: "Funcionalidade em manutenção. Repositório de banco foi alterado." });
   } catch(err) {
     return res.status(500).json({ msg: 'Erro interno'});
   }
@@ -34,8 +27,8 @@ router.post('/progresso', async (req, res) => {
 
 router.get('/progresso/concluidas', async (req, res) => {
   try {
-    const result = await getCompleted(req.user.id);
-    return res.status(200).json(result);
+    // Temporário até ajustar o lessonProgress.repository.js
+    return res.status(200).json({ msg: "Funcionalidade em manutenção. Repositório de banco foi alterado." });
   } catch(err) {
     return res.status(500).json({ msg: ' Erro interno'});
   }
@@ -44,13 +37,12 @@ router.get('/progresso/concluidas', async (req, res) => {
 router.get('/progresso/:lesson_id', async (req, res) => {
   const { lesson_id } = req.params;
   try {
-    const result = await getProgress(req.user.id, lesson_id);
-    return res.status(200).json(result || {});
+    // Temporário até ajustar o lessonProgress.repository.js
+    return res.status(200).json({ msg: "Funcionalidade em manutenção. Repositório de banco foi alterado." });
   } catch(err) {
     return res.status(500).json({ msg: ' Erro interno'});
   }
 });
 
-
-
 export default router;
+

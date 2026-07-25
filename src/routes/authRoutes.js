@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { login, register, getUsers } from './Controllers/authControllers.js';
-import { authenticateToken } from './MiddlewereRoutes.js';
-
+// Ajustado para apontar para o controlador correto no singular (authController.js)
+import { login, register, getUsers } from '../Controllers/authController.js';
+// Ajustado para voltar um nível e apontar para a pasta middlewares
+import { authenticateToken } from '../middlewares/MiddlewereRoutes.js';
 
 // Rotas auths para serem feitas:
 // POST /login
@@ -10,13 +11,9 @@ import { authenticateToken } from './MiddlewereRoutes.js';
 // POST /reset-password
 // GET /me
 
-
-
-
 const router = Router();
 
 router.post("/login", login);
-
 router.post("/register", register);
 
 router.get("/getUsers", authenticateToken, (req, res, next) => {
@@ -24,8 +21,5 @@ router.get("/getUsers", authenticateToken, (req, res, next) => {
     next();
 }, getUsers);
 
-
-
 export default router;
-    
-    
+

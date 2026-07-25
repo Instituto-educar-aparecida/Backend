@@ -2,8 +2,7 @@ import { Router } from 'express';
 
 import * as studentController from '../Controllers/studentController.js';
 import {
-    authenticateToken,
-    authorizeRoles
+    authenticateToken
 } from '../middlewares/MiddlewereRoutes.js';
 import { validate } from '../utils/validate.js';
 import {
@@ -14,9 +13,16 @@ import {
 
 const router = Router();
 
+// Aplica a autenticação e valida o cargo ('STUDENT' ou 'aluno') de forma nativa
 router.use(
     authenticateToken,
-    authorizeRoles('STUDENT', 'aluno')
+    (req, res, next) => {
+        const role = req.user?.role?.toUpperCase();
+        if (role !== 'STUDENT' && role !== 'ALUNO') {
+            return res.status(403).json({ msg: 'Acesso negado! Perfil não autorizado.' });
+        }
+        next();
+    }
 );
 
 router.get('/', (req, res) => {
@@ -64,3 +70,4 @@ router.post(
 );
 
 export default router;
+

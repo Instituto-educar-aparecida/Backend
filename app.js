@@ -6,17 +6,17 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 
-import authRoutes from './routes/authRoutes.js';
-import studentRoutes from './routes/studentRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import videoRoutes from './routes/videoRoutes.js';
-import professorRoutes from './routes/professorRoutes.js';
-import aulasRoutes from './routes/aulasRoutes.js';
+// ROTAS CORRIGIDAS DIRECIONADAS PARA A PASTA SRC
+import authRoutes from './src/routes/authRoutes.js';
+import studentRoutes from './src/routes/studentRoutes.js';
+import adminRoutes from './src/routes/admin.routes.js';
+import videoRoutes from './src/routes/videoRoutes.js';
+import professorRoutes from './src/routes/professorRoutes.js';
+import aulasRoutes from './src/routes/aulasRoutes.js';
 
 const app = express();
 
 // RATE LIMIT LOGIN
-
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
@@ -32,11 +32,8 @@ const loginSlowDown = slowDown({
 });
 
 // MIDDLEWARES GLOBAIS
-
 app.use(helmet());
-
 app.use(compression());
-
 app.use(morgan('dev'));
 
 app.use(cors({
@@ -48,15 +45,13 @@ app.use(cors({
 app.use(express.json());
 
 // ROTA PRINCIPAL
-
 app.get('/', (req, res) => {
     res.json({
         mensagem: '🚀 API do Instituto Educar Online e Integrada!'
     });
 });
 
-// ROTAS
-
+// MAPEAMENTO DE ROTAS
 app.use(
     '/api/auth/login',
     loginSlowDown,
@@ -64,19 +59,12 @@ app.use(
 );
 
 app.use('/api/auth', authRoutes);
-
 app.use('/api/aluno', studentRoutes);
-
 app.use('/api/admin', adminRoutes);
-
 app.use('/api/video', videoRoutes);
-
 app.use('/api/professor', professorRoutes);
-
 app.use('/api/aula', aulasRoutes);
 
-
 // EXPORT APP
-
-
 export default app;
+

@@ -1,8 +1,9 @@
-import { asyncHandler }
-    from '../utils/asyncHandler.js';
+// Removido o import do arquivo inexistente e criado o wrapper diretamente aqui
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
 
-import * as authService
-    from '../services/auth.service.js';
+import * as authService from '../services/auth.service.js';
 
 export const register = asyncHandler(
     async (req, res) => {
@@ -67,3 +68,4 @@ export default {
     getMe,
     getUsers
 };
+
