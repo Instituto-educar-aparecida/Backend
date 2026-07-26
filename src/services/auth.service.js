@@ -1,112 +1,177 @@
+// Serviço de autenticação. Concentra a lógica de negócio de auth.
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as userRepo from '../repositories/user.repository.js';
+import * as sessionRepo from '../repositories/userSession.repository.js';
+import * as resetRepo from '../repositories/passwordReset.repository.js';
+import { signAccessToken, generateRandomToken } from '../utils/jwt.js';
+import { AppError } from '../utils/AppError.js';
+import { USER_ROLE } from '../domain/enums/userRole.enum.js';
+import { logger } from '../config/logger.js';
 
-import * as userRepo
-    from '../repositories/user.repository.js';
+const SALT_ROUNDS = 10;
+const REFRESH_DAYS = parseInt(process.env.REFRESH_TOKEN_EXPIRES_DAYS || '7', 10);
+const RESET_TOKEN_MINUTES = 30;
 
-import { AppError }
-    from '../utils/AppError.js';
+export const register = async ({
+    name,
+    email,
+    password,
+    role,
+    phone,
+    bio,
+}) => {
+    const normalizedEmail = email.trim().toLowerCase();
 
-import { USER_ROLE }
-    from '../domain/enums/userRole.enum.js';
-
-const getJwtSecret = () => {
-    const secret = process.env.JWT_SECRET;
-
-    if (!secret) {
-        throw new AppError(
-            'JWT_SECRET não configurado.',
-            500
-        );
-    }
-
-    return secret;
-};
-
-export const register = async (data) => {
-    const email = data.email.trim().toLowerCase();
-
-    const existingUser =
-        await userRepo.findByEmail(email);
+    const existingUser = await userRepo.findByEmail(normalizedEmail);
 
     if (existingUser) {
+        throw new AppError('E-mail já cadastrado.', 409);
+    }
+
+    const finalRole = role || USER_ROLE.STUDENT;
+
+    if (finalRole === USER_ROLE.ADMIN) {
         throw new AppError(
-            'E-mail já cadastrado.',
-            409
+            'Não é permitido cadastrar administradores por esta rota.',
+            403,
         );
     }
 
-    const passwordHash = await bcrypt.hash(
-        data.password,
-        10
-    );
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     return userRepo.createUser({
-        name: data.name,
-        email,
+        name: name.trim(),
+        email: normalizedEmail,
         passwordHash,
-        role: USER_ROLE.STUDENT,
-        phone: data.phone ?? null
+        role: finalRole,
+        phone: phone?.trim() || null,
+        bio: bio?.trim() || null,
     });
 };
 
-export const login = async ({
-    email,
-    password
-}) => {
+export const login = async ({ email, password }) => {
     const user = await userRepo.findByEmail(
-        email.trim().toLowerCase()
+        email.trim().toLowerCase(),
     );
 
     if (!user) {
-        throw new AppError(
-            'Usuário ou senha inválidos.',
-            401
-        );
+        throw new AppError('Usuário ou senha inválidos.', 401);
     }
 
     if (!user.active) {
         throw new AppError(
-            'Usuário inativo.',
-            403
+            'Conta bloqueada. Contate o suporte.',
+            403,
         );
     }
 
-    const passwordMatches =
-        await bcrypt.compare(
-            password,
-            user.password_hash
-        );
+    const passwordMatches = await bcrypt.compare(
+        password,
+        user.password_hash,
+    );
 
     if (!passwordMatches) {
-        throw new AppError(
-            'Usuário ou senha inválidos.',
-            401
-        );
+        throw new AppError('Usuário ou senha inválidos.', 401);
     }
 
-    const token = jwt.sign(
-        {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        },
-        getJwtSecret(),
-        {
-            expiresIn:
-                process.env.JWT_EXPIRES_IN ?? '2h'
-        }
+    const token = signAccessToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    });
+
+    const refreshToken = generateRandomToken();
+    const expiresAt = new Date(
+        Date.now() + REFRESH_DAYS * 24 * 60 * 60 * 1000,
+    );
+
+    await sessionRepo.createSession(
+        user.id,
+        refreshToken,
+        expiresAt,
     );
 
     return {
         token,
+        refreshToken,
         user: {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role
-        }
+            role: user.role,
+        },
+    };
+};
+
+export const logout = async (userId, refreshToken) => {
+    if (refreshToken) {
+        await sessionRepo.invalidate(refreshToken);
+    } else {
+        await sessionRepo.invalidateAllForUser(userId);
+    }
+
+    return true;
+};
+
+export const forgotPassword = async (email) => {
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await userRepo.findByEmail(normalizedEmail);
+
+    if (!user) {
+        return {
+            message:
+                'Se o e-mail existir, um link de recuperação será enviado.',
+        };
+    }
+
+    await resetRepo.invalidateForUser(user.id);
+
+    const token = generateRandomToken(24);
+    const expiresAt = new Date(
+        Date.now() + RESET_TOKEN_MINUTES * 60 * 1000,
+    );
+
+    await resetRepo.createToken(user.id, token, expiresAt);
+
+    const resetLink =
+        `${process.env.APP_BASE_URL || ''}/reset-password?token=${token}`;
+
+    logger.info(
+        `[RECUPERAÇÃO DE SENHA] Token gerado para ${normalizedEmail}: ${token}`,
+    );
+
+    return {
+        message:
+            'Se o e-mail existir, um link de recuperação será enviado.',
+        ...(process.env.NODE_ENV !== 'production'
+            ? { token, resetLink }
+            : {}),
+    };
+};
+
+export const resetPassword = async (token, newPassword) => {
+    const record = await resetRepo.findValidToken(token);
+
+    if (!record) {
+        throw new AppError('Token inválido ou expirado.', 400);
+    }
+
+    const passwordHash = await bcrypt.hash(
+        newPassword,
+        SALT_ROUNDS,
+    );
+
+    await userRepo.updatePassword(
+        record.user_id,
+        passwordHash,
+    );
+
+    await resetRepo.markUsed(record.id);
+    await sessionRepo.invalidateAllForUser(record.user_id);
+
+    return {
+        message: 'Senha redefinida com sucesso.',
     };
 };
 
@@ -114,24 +179,17 @@ export const getMe = async (userId) => {
     const user = await userRepo.findById(userId);
 
     if (!user) {
-        throw new AppError(
-            'Usuário não encontrado.',
-            404
-        );
+        throw new AppError('Usuário não encontrado.', 404);
     }
 
     return user;
 };
 
-export const listUsers = async (
-    filters = {}
-) => {
-    return userRepo.listUsers(filters);
-};
-
 export default {
     register,
     login,
+    logout,
+    forgotPassword,
+    resetPassword,
     getMe,
-    listUsers
 };

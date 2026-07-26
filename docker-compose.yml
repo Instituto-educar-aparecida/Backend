@@ -1,64 +1,110 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     container_name: educar-api
     working_dir: /app
     command: npm run dev
+
     ports:
-      - "5173:5173"
-    restart: always  
+      - "${PORT:-5173}:5173"
+
+    restart: unless-stopped
+
     volumes:
       - .:/app
       - /app/node_modules
+
     environment:
-      DB_HOST: db 
-      DB_USER: EducarDev
-      DB_PASSWORD: "271627"
-      DB_NAME: EducarDev
-      DB_PORT: 5432
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 5173
+
+      DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT:-5432}
+
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-2h}
+      REFRESH_TOKEN_EXPIRES_DAYS: ${REFRESH_TOKEN_EXPIRES_DAYS:-7}
+
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:5173}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      LOG_LEVEL: ${LOG_LEVEL:-http}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
     networks:
       - pg-network
-    depends_on:
-        db:
-          condition: service_healthy 
-  
-  # configuração do container do postgres 
+
   db:
     image: postgres:16
-    command: postgres -c shared_buffers=256MB -c max_connections=200 -c listen_addresses='*'
+
+    container_name: educar-db
+    restart: unless-stopped
+
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - max_connections=200
+      - -c
+      - listen_addresses=*
+
     ports:
-      - 5432:5432
+      - "5432:5432"
+
     environment:
-      POSTGRES_PASSWORD: "271627"
-      POSTGRES_USER: EducarDev 
-      POSTGRES_DB: EducarDev
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./src/database/init:/docker-entrypoint-initdb.d
-    networks:
-      - pg-network
+      - ./src/database/init:/docker-entrypoint-initdb.d:ro
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U EducarDev -d EducarDev"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER} -d ${DB_NAME}"
+        ]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
 
-  # configuração do container do pgadmin 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: Educar@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: ProjetoEducar
-    ports:
-      - "8080:80"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
     networks:
       - pg-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+
+    container_name: educar-pgadmin
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-Educar@gmail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-ProjetoEducar}
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+    networks:
+      - pg-network
 
 networks:
   pg-network:

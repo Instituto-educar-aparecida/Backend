@@ -1,6 +1,39 @@
-# 🚀 Instituto Educar - Aparecida
+# 🚀 Instituto Educar - Aparecida (Backend)
 
-Bem-vindo ao ecossistema de desenvolvimento do **Instituto Educar**. Este projeto utiliza **Docker** para garantir que todos os 10 desenvolvedores e a gestão trabalhem em um ambiente idêntico.
+Bem-vindo ao ecossistema de desenvolvimento do **Instituto Educar**. Este repositório contém a **API REST (backend)** da plataforma de cursos online gratuitos.
+
+## 🧱 Arquitetura
+
+API em **Node.js 20 + Express** com **PostgreSQL** (driver `pg`, SQL puro — sem ORM), organizada em camadas:
+
+```
+routes → controllers → services → repositories → (PostgreSQL)
+```
+
+- **Validação:** Zod (`src/validators`)
+- **Autenticação:** JWT (`Authorization: Bearer <token>`) + RBAC por papel
+- **Erros:** classe `AppError` + middleware global de tratamento de erros
+- **Logs:** Winston
+- **Certificados:** geração de PDF com `pdfkit` (servidos em `/certificates`)
+- **Segurança:** helmet, CORS, rate limit no login
+
+A documentação completa dos endpoints está em **APIDoc.md**. O esquema do banco está em **db_schema.md**.
+
+## ▶️ Rodando localmente (sem Docker)
+
+1. Tenha **Node.js 20+** e **PostgreSQL** instalados e em execução.
+2. Crie o banco e o usuário (ex.: `EducarDev` / senha `271627` / db `EducarDev`).
+3. Execute os scripts de `database/init/*.sql` (em ordem) para criar o schema.
+4. Copie `.env.example` para `.env` e ajuste as variáveis (DB, `JWT_SECRET`, `PORT`).
+5. Instale as dependências e inicie:
+   ```bash
+   npm install
+   npm run dev      # desenvolvimento (nodemon)
+   npm start        # produção
+   ```
+6. A API sobe em `http://localhost:5173` (rota de saúde: `GET /api/health`).
+
+## 🐳 Rodando com Docker
 
 ##  🛠️ Pré-requisitos
 Você precisa apenas do **Docker** instalado:

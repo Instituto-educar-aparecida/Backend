@@ -1,7 +1,6 @@
-// Configuração da aplicação Express do Instituto Educar.
-// Registra middlewares globais, rotas da API e o tratamento de erros.
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,68 +10,113 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 
 import apiRoutes from './src/routes/index.js';
-//import { notFound, errorHandler } from './src/middlewares/error.middleware.js';
-//import { logger } from './src/config/logger.js';
+import { logger } from './src/config/logger.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Confia no proxy (necessário para obter o IP real atrás de proxies/preview).
 app.set('trust proxy', 1);
 
-//  Middlewares globais de segurança e utilidade 
 app.use(helmet());
 app.use(compression());
+
 app.use(cors({
     origin: process.env.CORS_ORIGIN || '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: [
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'OPTIONS'
+    ],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization'
+    ]
 }));
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true }));
 
-// Encaminha os logs de acesso (morgan) para o Winston.
+app.use(express.json({
+    limit: '2mb'
+}));
+
+app.use(express.urlencoded({
+    extended: true
+}));
+
 app.use(morgan('dev', {
-    stream: { write: (message) => logger.http ? logger.http(message.trim()) : logger.info(message.trim()) },
+    stream: {
+        write: (message) => {
+            logger.http(message.trim());
+        }
+    }
 }));
 
-//  Limitação de taxa nas rotas sensíveis de autenticação 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    limit: 10,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { status: 'error', message: 'Muitas tentativas. Tente novamente em 15 minutos.' },
+    message: {
+        status: 'error',
+        message:
+            'Muitas tentativas. Tente novamente em 15 minutos.'
+    }
 });
+
 const loginSlowDown = slowDown({
     windowMs: 15 * 60 * 1000,
     delayAfter: 5,
-    delayMs: () => 500,
+    delayMs: () => 500
 });
-app.use('/api/auth/login', loginSlowDown, loginLimiter);
 
-//  Arquivos estáticos: PDFs de certificados emitidos 
-app.use('/certificates', express.static(path.join(__dirname, 'uploads', 'certificates')));
+app.use(
+    '/api/auth/login',
+    loginSlowDown,
+    loginLimiter
+);
 
-//  Rota raiz (informativa) 
+app.use(
+    '/certificates',
+    express.static(
+        path.join(__dirname, 'uploads', 'certificates')
+    )
+);
+
 app.get('/', (req, res) => {
-    res.json({ status: 'success', message: '🚀 API do Instituto Educar online e integrada!' });
+    res.status(200).json({
+        status: 'success',
+        message:
+            'API do Instituto Educar online e integrada!'
+    });
 });
 
-//  Rotas da API 
 app.use('/api', apiRoutes);
 
-// Tratamento de erros 
-// app.use(notFound);
-// app.use(errorHandler);
-
-app.use((err, req, res, next) => {
-    console.error(err);
-
-    return res.status(err.statusCode || 500).json({
+app.use((req, res) => {
+    res.status(404).json({
         status: 'error',
-        message: err.message || 'Erro interno do servidor.'
+        message: 'Rota não encontrada.'
+    });
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    logger.error(err);
+
+    const statusCode =
+        err.statusCode ||
+        err.status ||
+        500;
+
+    return res.status(statusCode).json({
+        status: 'error',
+        message:
+            statusCode === 500
+                ? 'Erro interno do servidor.'
+                : err.message
     });
 });
 

@@ -113,3 +113,19 @@ export const reviewCourse = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getCertificates = async (req, res) => {
+    const data = await studentService.getCertificates(req.user.id);
+    res.status(200).json({ status: 'success', data });
+};
+
+// POST /api/student/courses/:courseId/certificate — emite o certificado (RF18).
+export const issueCertificate = async (req, res) => {
+    const data = await certificateService.issueCertificate(req.user.id, req.params.courseId);
+    res.status(201).json({ status: 'success', message: 'Certificado emitido.', data });
+};
+
+export default {
+    updateProfile, getDashboard, getMyCourses, enroll, cancelEnrollment,
+    getCourseProgress, reviewCourse, getCertificates, issueCertificate,
+};
