@@ -18,4 +18,3 @@ CREATE TABLE IF NOT EXISTS public."lesson_files"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."lesson_files"
-OWNER TO "EducarDev";

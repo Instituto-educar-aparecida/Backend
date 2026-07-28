@@ -16,4 +16,3 @@ CREATE TABLE IF NOT EXISTS public."open_questions"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."open_questions"
-OWNER TO "EducarDev";

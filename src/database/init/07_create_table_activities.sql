@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS public."activities"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."activities"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_activities_module_id
 ON public."activities"(module_id);

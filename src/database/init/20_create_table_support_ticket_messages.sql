@@ -20,4 +20,3 @@ CREATE TABLE IF NOT EXISTS public."support_ticket_messages"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."support_ticket_messages"
-OWNER TO "EducarDev";

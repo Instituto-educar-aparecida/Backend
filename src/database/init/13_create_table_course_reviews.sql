@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public."course_reviews"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."course_reviews"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_course_reviews_course_id
 ON public."course_reviews"(course_id);

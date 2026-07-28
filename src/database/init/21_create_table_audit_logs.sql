@@ -18,4 +18,3 @@ CREATE TABLE IF NOT EXISTS public."audit_logs"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."audit_logs"
-OWNER TO "EducarDev";

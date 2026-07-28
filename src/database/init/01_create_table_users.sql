@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS public."users"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."users"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_users_email
 ON public."users"(email);

@@ -16,4 +16,3 @@ CREATE TABLE IF NOT EXISTS public."user_sessions"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."user_sessions"
-OWNER TO "EducarDev";
