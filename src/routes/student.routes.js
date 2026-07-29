@@ -78,4 +78,10 @@ router.post(
     studentController.issueCertificate,
 );
 
+router.get(
+    '/courses/:courseId/structure',
+    validate(courseIdParamSchema, 'params'),
+    studentController.getCourseStructure,
+);
+
 export default router;

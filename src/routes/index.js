@@ -10,6 +10,7 @@ import instructorRoutes from './instructor.routes.js';
 import adminRoutes from './admin.routes.js';
 import supportRoutes from './support.routes.js';
 import videoRoutes from './video.routes.js';
+import certificateRoutes from './certificate.routes.js';
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use('/instructors', instructorRoutes);
 router.use('/admin', adminRoutes);
 router.use('/support', supportRoutes);
 router.use('/videos', videoRoutes);
+router.use('/certificates', certificateRoutes);
 
 export default router;

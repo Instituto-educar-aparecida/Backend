@@ -120,6 +120,16 @@ export const getProgress = asyncHandler(
     }
 );
 
+export const getQuestionsForStudent = asyncHandler(
+    async (req, res) => {
+        const data = await activityService.getQuestionsForStudent(req.params.id);
+        return res.status(200).json({
+            status: 'success',
+            data
+        });
+    }
+);
+
 export default {
     updateActivity,
     deleteActivity,
@@ -127,5 +137,6 @@ export default {
     addOpenQuestion,
     submit,
     gradeSubmission,
-    getProgress
+    getProgress,
+    getQuestionsForStudent
 };

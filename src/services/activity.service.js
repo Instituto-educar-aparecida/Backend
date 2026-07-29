@@ -312,6 +312,36 @@ export const getProgress = async (
     return progress;
 };
 
+// Retorna as perguntas de uma atividade para o aluno responder,
+// sem expor o gabarito (correct_option) das questões objetivas.
+export const getQuestionsForStudent = async (activityId) => {
+    await getActivityOrFail(activityId);
+
+    const objectiveQuestions = await questionRepo.getObjectiveByActivity(activityId);
+    const openQuestions = await questionRepo.getOpenByActivity(activityId);
+
+    const safeObjective = objectiveQuestions.map((q) => ({
+        id: q.id,
+        description: q.description,
+        image_url: q.image_url,
+        option_1: q.option_1,
+        option_2: q.option_2,
+        option_3: q.option_3,
+        option_4: q.option_4,
+        option_5: q.option_5,
+        type: 'objective'
+    }));
+
+    const safeOpen = openQuestions.map((q) => ({
+        id: q.id,
+        description: q.description,
+        image_url: q.image_url,
+        type: 'open'
+    }));
+
+    return { objective_questions: safeObjective, open_questions: safeOpen };
+};
+
 export default {
     getActivityOrFail,
     createActivity,
@@ -321,5 +351,6 @@ export default {
     addOpenQuestion,
     submit,
     gradeSubmission,
-    getProgress
+    getProgress,
+    getQuestionsForStudent
 };

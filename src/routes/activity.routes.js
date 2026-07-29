@@ -83,6 +83,12 @@ router.patch(
 );
 
 router.get(
+    '/:id/questions',
+    authorizeRoles(USER_ROLE.STUDENT),
+    activityController.getQuestionsForStudent
+);
+
+router.get(
     '/:id/progress',
     authorizeRoles(USER_ROLE.STUDENT),
     activityController.getProgress

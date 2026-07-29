@@ -1,4 +1,5 @@
 import * as studentService from '../services/student.service.js';
+import * as certificateService from '../services/certificate.service.js';
 
 export const updateProfile = async (req, res, next) => {
     try {
@@ -114,18 +115,36 @@ export const reviewCourse = async (req, res, next) => {
     }
 };
 
-export const getCertificates = async (req, res) => {
-    const data = await studentService.getCertificates(req.user.id);
-    res.status(200).json({ status: 'success', data });
+export const getCertificates = async (req, res, next) => {
+    try {
+        const data = await studentService.getCertificates(req.user.id);
+        return res.status(200).json({ status: 'success', data });
+    } catch (error) {
+        next(error);
+    }
 };
 
 // POST /api/student/courses/:courseId/certificate — emite o certificado (RF18).
-export const issueCertificate = async (req, res) => {
-    const data = await certificateService.issueCertificate(req.user.id, req.params.courseId);
-    res.status(201).json({ status: 'success', message: 'Certificado emitido.', data });
+export const issueCertificate = async (req, res, next) => {
+    try {
+        const data = await certificateService.issueCertificate(req.user.id, req.params.courseId);
+        return res.status(201).json({ status: 'success', message: 'Certificado emitido.', data });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// GET /api/students/courses/:courseId/structure - modulos, aulas e atividades com trava calculada.
+export const getCourseStructure = async (req, res, next) => {
+    try {
+        const structure = await studentService.getCourseStructure(req.user.id, req.params.courseId);
+        return res.status(200).json({ status: 'success', data: structure });
+    } catch (error) {
+        next(error);
+    }
 };
 
 export default {
     updateProfile, getDashboard, getMyCourses, enroll, cancelEnrollment,
-    getCourseProgress, reviewCourse, getCertificates, issueCertificate,
+    getCourseProgress, reviewCourse, getCertificates, issueCertificate, getCourseStructure,
 };

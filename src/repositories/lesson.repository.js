@@ -99,7 +99,24 @@ export const getFiles = async (lessonId) => {
     return res.rows;
 };
 
+// Lista todas as aulas de um curso com o progresso do aluno, ordenadas por módulo e criação.
+export const findByCourseWithProgress = async (courseId, studentId) => {
+    const res = await pool.query(
+        `SELECT l.id, l.title, l.description, l.video_url, l.duration_seconds, l.module_id,
+                m."order" AS module_order,
+                lp.status AS progress_status,
+                lp.completed_at
+         FROM "lessons" l
+         JOIN "modules" m ON m.id = l.module_id
+         LEFT JOIN "lesson_progress" lp ON lp.lesson_id = l.id AND lp.student_id = $2
+         WHERE m.course_id = $1 AND l.deleted_at IS NULL AND m.deleted_at IS NULL
+         ORDER BY m."order" ASC, l.created_at ASC`,
+        [courseId, studentId]
+    );
+    return res.rows;
+};
+
 export default {
     createLesson, findById, findByModule, updateLesson, softDelete, countByCourse,
-    addSupportText, getSupportTexts, addFile, getFiles,
+    addSupportText, getSupportTexts, addFile, getFiles, findByCourseWithProgress,
 };

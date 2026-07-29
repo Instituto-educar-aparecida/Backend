@@ -71,4 +71,23 @@ export const refreshQuestionCount = async (id) => {
     return res.rows[0]?.question_count ?? 0;
 };
 
-export default { createActivity, findById, findByModule, updateActivity, softDelete, refreshQuestionCount };
+// Lista atividades de um curso com o progresso do aluno em cada uma.
+export const findByCourseWithProgress = async (courseId, studentId) => {
+    const res = await pool.query(
+        `SELECT a.id, a.title, a.module_id, a.minimum_grade, a.question_count, a.status AS activity_status,
+                ap.status AS progress_status,
+                ap.grade
+         FROM "activities" a
+         JOIN "modules" m ON m.id = a.module_id
+         LEFT JOIN "activity_progress" ap ON ap.activity_id = a.id AND ap.student_id = $2
+         WHERE m.course_id = $1 AND a.deleted_at IS NULL AND m.deleted_at IS NULL
+         ORDER BY m."order" ASC, a.created_at ASC`,
+        [courseId, studentId]
+    );
+    return res.rows;
+};
+
+export default {
+    createActivity, findById, findByModule, updateActivity, softDelete, refreshQuestionCount,
+    findByCourseWithProgress,
+};
