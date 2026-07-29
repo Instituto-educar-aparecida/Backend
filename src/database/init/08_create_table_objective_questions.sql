@@ -25,4 +25,3 @@ CREATE TABLE IF NOT EXISTS public."objective_questions"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."objective_questions"
-OWNER TO "EducarDev";

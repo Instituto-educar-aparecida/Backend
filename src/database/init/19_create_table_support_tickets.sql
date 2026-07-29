@@ -24,4 +24,3 @@ CREATE TABLE IF NOT EXISTS public."support_tickets"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."support_tickets"
-OWNER TO "EducarDev";

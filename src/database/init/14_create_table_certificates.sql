@@ -34,4 +34,3 @@ CREATE TABLE IF NOT EXISTS public."certificates"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."certificates"
-OWNER TO "EducarDev";

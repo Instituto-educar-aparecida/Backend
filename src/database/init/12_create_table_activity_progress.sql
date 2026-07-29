@@ -34,4 +34,3 @@ CREATE TABLE IF NOT EXISTS public."activity_progress"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."activity_progress"
-OWNER TO "EducarDev";

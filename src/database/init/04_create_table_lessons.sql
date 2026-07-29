@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public."lessons"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."lessons"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_lessons_module_id
 ON public."lessons"(module_id);

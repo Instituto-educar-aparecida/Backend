@@ -19,4 +19,3 @@ CREATE TABLE IF NOT EXISTS public."password_resets"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."password_resets"
-OWNER TO "EducarDev";

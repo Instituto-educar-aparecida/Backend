@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS public."enrollments"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."enrollments"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_enrollments_student_id
 ON public."enrollments"(student_id);

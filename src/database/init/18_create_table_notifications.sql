@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS public."notifications"(
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."notifications"
-OWNER TO "EducarDev";
+
 
 CREATE INDEX idx_notifications_user_id
 ON public."notifications"(user_id);
